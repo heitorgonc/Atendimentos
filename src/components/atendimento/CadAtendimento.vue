@@ -1,9 +1,29 @@
 <template>
     <main id="main">
         <div class="container">
-            <h1 class="title">Cadastrar Atendimento</h1>
+            <h2 class="title">Cadastrar Atendimento</h2>
             <form class="row g-3">
                 <div class="col-md-6">
+                    <label for="funcionario" class="form-label">Funcionário:</label>
+                    <v-text-field type="text" maxlength="255" name='funcionario' outlined dense
+                    id="funcionario" :rules="[rules.nome]" v-model="funcionario"></v-text-field>
+                </div>
+                <div class="col-md-6">
+                    <v-layout justify-space-between>
+                        <label for="client" class="form-label">Razão Social</label>
+                        <v-dialog v-model="cadCliDialog" persistent max-width="600px">
+                            <template v-slot:activator="{on, attrs}">
+                                <span class="btn-dialog" v-bind="attrs" v-on="on">
+                                    Deseja criar um novo cliente ?
+                                </span>
+                            </template>
+                            <CadClienteAtend></CadClienteAtend>
+                        </v-dialog>
+                    </v-layout>
+                    <v-select :items="clientes" outlined dense placeholder="Selecione o Cliente" v-model="cliente"
+                    hide-selected></v-select>
+                </div>
+                <div class="col-md-12">
                     <v-layout justify-space-between>
                         <label for="selectTecnico" class="form-label">Técnico</label>
                         <v-dialog v-model="cadTecDialog" persistent max-width="600px">
@@ -18,30 +38,15 @@
                     <v-select :items="tecnicos" outlined dense placeholder="Selecione o Técnico" v-model="tecnico"
                     hide-selected></v-select>
                 </div>
-                <div class="col-md-6">
-                    <v-layout justify-space-between>
-                        <label for="client" class="form-label">Cliente / Razão Social</label>
-                        <v-dialog v-model="cadCliDialog" persistent max-width="600px">
-                            <template v-slot:activator="{on, attrs}">
-                                <span class="btn-dialog" v-bind="attrs" v-on="on">
-                                    Deseja criar um novo cliente ?
-                                </span>
-                            </template>
-                            <CadClienteAtend></CadClienteAtend>
-                        </v-dialog>
-                    </v-layout>
-                    <v-select :items="clientes" outlined dense placeholder="Selecione o Cliente" v-model="cliente"
-                    hide-selected></v-select>
-                </div>
                 <div class="col-12">
                     <label for="relato" class="form-label">Relato</label>
                     <v-textarea id="relato" rows="5" v-model="relato" maxlength="399" :rules="[rules.relato, rules.required]" 
-                    outlined spellcheck="false"></v-textarea>
+                    outlined spellcheck="false" dense></v-textarea>
                 </div>
-                <div class="col-12 mt-5">
+                <div class="col-12">
                     <button type="submit" class="btn btn-red"
                     :disabled="noTecnico || tecnicoNotSelected || noCliente || noRelato ||
-                    clienteNotSelected || shortRelato">Gravar Atendimento</button>
+                    clienteNotSelected || shortRelato || shortFuncionario">Gravar Atendimento</button>
                     <router-link to="/atendimentos">
                         <a class="btn btn-black ml-2"> Voltar </a>
                     </router-link>
@@ -62,6 +67,7 @@ export default {
     },
     data(){
         return {
+            funcionario: '',
             tecnico: '',
             cliente: '',
             relato: '',
@@ -71,17 +77,19 @@ export default {
         }
     },
     computed:{
+        shortFuncionario(){
+            if(this.funcionario.length > 0){
+                return this.funcionario.length < 3
+            }else{
+                return this.funcionario.length > 0
+            }
+            
+        },
         noTecnico(){
             return this.tecnico == ""
         },
-        tecnicoNotSelected(){
-            return this.tecnico == "Selecione o Técnico"
-        },
         noCliente(){
             return this.cliente == ""
-        },
-        clienteNotSelected(){
-            return this.cliente == "Selecione o Cliente"
         },
         noRelato(){
             return this.relato == ""
@@ -92,9 +100,6 @@ export default {
             }else{
                 return this.relato.length > 0
             }
-        },
-        noAtivo(){
-            return this.ativo == null
         },
         rules(){
             return this.$store.getters.rules

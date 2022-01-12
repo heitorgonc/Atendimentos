@@ -1,8 +1,8 @@
 <template>
-    <div class="container">
+    <div class="container pa-0">
             <nav class="navbar navbar-expand-lg navbar-light">
                 <router-link class="navbar-brand" to="/atendimentos">
-                    <img src="../../../assets/imgs/logos/logo-hypersoft.svg" width="190" alt="Logo Hypersoft" class="img-fluid"/>
+                    <img src="../../../assets/imgs/logos/logo-hypersoft.svg" width="150" alt="Logo Hypersoft" class="img-fluid"/>
                 </router-link>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

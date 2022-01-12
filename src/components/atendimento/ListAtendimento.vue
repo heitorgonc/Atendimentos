@@ -48,17 +48,18 @@ export default {
             header:[
                 {text: '#', align: 'start', sortable: 'true', value: 'codigo' },
                 {text: 'Técnico', value: 'tecnico'},
+                {text: 'Funcionário', value: 'funcionario'},
                 {text: 'Cliente', value: 'cliente'},
                 {text: 'Relato', value: 'relato'},
                 {text: 'Data', value: 'date'},
                 {text: 'Ações', value: 'actions', sortable: false}
             ],
             atendimentos:[
-                {codigo: '1', tecnico:'Rickson', cliente:'Polo Norte', relato: 'Emissão de certificado digital', ativo: true, date:'07/01/2022'},
-                {codigo: '2', tecnico:'Jaílson', cliente:'Mega Leite', relato:'Dúvidas NFe', ativo: true, date:'07/01/2022'},
-                {codigo: '3', tecnico:'Luiz Felipe', cliente:'Udipres', relato:'Atualização de certificado digital', ativo: false, date:'07/01/2022'},
-                {codigo: '4', tecnico:'Daniel', cliente:'Leal', relato:'Instalação de sistema', ativo: true, date:'07/01/2022'},
-                {codigo: '5', tecnico:'Rudielle', cliente:'Cozini', relato:'Balanço com corretor', ativo: true, date:'07/01/2022'}
+                {codigo: '1', tecnico:'Rickson', funcionario: 'Matheus', cliente:'Polo Norte', relato: 'Emissão de certificado digital', ativo: true, date:'07/01/2022'},
+                {codigo: '2', tecnico:'Jaílson', funcionario: 'Leonardo', cliente:'Mega Leite', relato:'Dúvidas NFe', ativo: true, date:'07/01/2022'},
+                {codigo: '3', tecnico:'Luiz Felipe', funcionario: ' Diogo',cliente:'Udipres', relato:'Atualização de certificado digital', ativo: false, date:'07/01/2022'},
+                {codigo: '4', tecnico:'Daniel', funcionario: 'Ana', cliente:'Leal', relato:'Instalação de sistema', ativo: true, date:'07/01/2022'},
+                {codigo: '5', tecnico:'Rudielle', funcionario: 'Alessandra', cliente:'Cozini', relato:'Balanço com corretor', ativo: true, date:'07/01/2022'}
             ]
         }
     }

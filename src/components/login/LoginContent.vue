@@ -20,7 +20,7 @@
                     <v-form>
                         <v-container fluid>
                             <v-row>
-                                <v-select dense :items="tecnicos" placeholder="Técnico" v-model="tecnico" outlined></v-select>
+                                <v-select dense :items="tecnicos" placeholder="Técnico" v-model="tecnico" outlined hide-selected></v-select>
                             </v-row>
                             <v-row>
                                 <v-btn block color="red darken-1" class="btn" :disabled="noSelect" to="/atendimentos">Entrar</v-btn>

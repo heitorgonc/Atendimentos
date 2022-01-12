@@ -25,6 +25,10 @@
                     <v-text-field type="text" outlined dense v-model="cnpj" maxlength="14" id="cnpj_cliente"
                     :rules="[rules.cnpj]"></v-text-field>
                 </v-col>
+                <v-col cols="12" sm="12">
+                    <label for="contato" class="form-label">Contato:</label>
+                    <input required type="text" maxlength="255" name='contato' class="form-control" id="contato" v-model="contato"/>
+                </v-col>
             </v-row>
             <div class="col-12">
                 <button class="btn btn-red" :disabled="noNome || noFantasia || shortNome || shortCnpj ||
@@ -43,6 +47,7 @@ export default {
             telefone: '',
             fantasia: '',
             cnpj: '',
+            contato: '',
             ativo: true
         }
     },

@@ -23,6 +23,10 @@
                     <v-text-field type="text" outlined dense v-model="cnpj" maxlength="18" id="cnpj_cliente" name="cpfcnpj"
                     :rules="[rules.cnpj]" onkeypress="mascaraMutuario(this,cpfCnpj)"  onblur='clearTimeout()'></v-text-field>
                 </div>
+                <div class="col-md-12">
+                    <label for="contato" class="form-label">Contato:</label>
+                    <v-text-field required type="text" maxlength="255" name='contato' id="contato" dense outlined></v-text-field>
+                </div>
                 <div class="col-md-6">
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="1" @click="ativo = true" checked/>

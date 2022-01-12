@@ -4,17 +4,9 @@
             <h1 class="title">Editar Atendimento</h1>
             <form class="row g-3">
                 <div class="col-md-6">
-                    <v-layout justify-space-between>
-                        <label for="selectTecnico" class="form-label">Técnico</label>
-                        <v-dialog v-model="cadTecDialog" persistent max-width="600px">
-                            <template v-slot:activator="{on, attrs}">
-                                <span class="btn-dialog" v-bind="attrs" v-on="on">Deseja criar um novo Técnico ?</span>
-                            </template>
-                            <CadTecAtend></CadTecAtend>
-                        </v-dialog>
-                    </v-layout>
-                    <v-select :items="tecnicos" outlined dense placeholder="Selecione o Tecnico" v-model="tecnico"
-                    hide-selected></v-select>
+                    <label for="funcionario" class="form-label">Funcionário:</label>
+                    <v-text-field type="text" maxlength="255" name='funcionario' outlined dense
+                    id="funcionario" :rules="[rules.nome]" v-model="funcionario"></v-text-field>
                 </div>
                 <div class="col-md-6">
                     <v-layout justify-space-between>
@@ -29,16 +21,32 @@
                     <v-select :items="clientes" outlined dense placeholder="Selecione o Cliente" v-model="cliente"
                     hide-selected></v-select>
                 </div>
+                <div class="col-md-12">
+                    <v-layout justify-space-between>
+                        <label for="selectTecnico" class="form-label">Técnico</label>
+                        <v-dialog v-model="cadTecDialog" persistent max-width="600px">
+                            <template v-slot:activator="{on, attrs}">
+                                <span class="btn-dialog" v-bind="attrs" v-on="on">Deseja criar um novo Técnico ?</span>
+                            </template>
+                            <CadTecAtend></CadTecAtend>
+                        </v-dialog>
+                    </v-layout>
+                    <v-select :items="tecnicos" outlined dense placeholder="Selecione o Tecnico" v-model="tecnico"
+                    hide-selected></v-select>
+                </div>
                 <div class="col-12">
                     <label for="relato" class="form-label">Relato</label>
                     <v-textarea id="relato" rows="5" v-model="relato" :rules="[rules.relato, rules.required]" 
-                    maxlength="399" outlined spellcheck="false"></v-textarea>
+                    maxlength="399" outlined spellcheck="false" dense></v-textarea>
                 </div>
                 <div class="col-12 mt-5">
-                    <button type="submit" class="btn btn-red mr-2" 
-                    :disabled="noTecnico || tecnicoNotSelected || noCliente || clienteNotSelected || shortRelato || noRelato">
-                        Atualizar Atendimento
-                    </button>
+                    <router-link to="/atendimentos" tag="bottom">
+                        <bottom class="btn btn-red mr-2"  
+                        :disabled="noTecnico || tecnicoNotSelected || noCliente || clienteNotSelected 
+                        || shortRelato || noRelato || shortFuncionario">
+                            Atualizar Atendimento
+                        </bottom>
+                    </router-link>
                     <router-link to="/atendimentos" tag="button">
                         <a class="btn btn-dark"> Voltar </a>
                     </router-link>
@@ -66,9 +74,18 @@ export default {
             cliente: this.$route.query.atendimento.cliente,
             relato: this.$route.query.atendimento.relato,
             ativo: this.$route.query.atendimento.ativo,
+            funcionario: this.$route.query.atendimento.funcionario
         }
     },
     computed:{
+        shortFuncionario(){
+            if(this.funcionario.length > 0){
+                return this.funcionario.length < 3
+            }else{
+                return this.funcionario.length > 0
+            }
+            
+        },
         noTecnico(){
             return this.tecnico == ""
         },
@@ -108,17 +125,6 @@ export default {
             },
             set(cadTecDialog){
                 this.$store.commit('setCadTecDialog', cadTecDialog)
-            }
-        }
-    },
-    beforeRouteLeave(to, from, next){
-        if(this.relato == '' && this.tecnico == '' && this.cliente == ''){
-            next()
-        }else{
-            if(confirm('Seus dados serão perdidos. Tem certeza ?')){
-                next()
-            }else{
-                next(false)
             }
         }
     }
