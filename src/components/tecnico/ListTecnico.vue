@@ -21,12 +21,10 @@
                     </div>
                 </v-card>
             </template>
-            <router-link to="/tecnicos/cadastro/">
-                <a type="button" class="btn btn-red mt-5">Cadastrar Técnico</a>
-            </router-link>
-            <router-link to="/atendimentos/">
-                <a type="button" class="btn btn-dark mt-5 ml-2">Voltar</a>
-            </router-link>
+            <div class="col-12">
+                <v-btn class="btn btn-red mt-5" to="/tecnicos/cadastro">Cadastrar Técnico</v-btn>
+                <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos">Voltar</v-btn>
+            </div>
         </div>
     </v-container>
 </template>
@@ -40,58 +38,30 @@ export default {
             pageCount: 0,
             itemsPerPage: 5,
             headers: [
-                    {
-                        text: '#',
-                        align: 'start',
-                        sortable: true,
-                        value: 'codigo',
-                    },
-                    { text: 'Nome', value: 'nome' },
-                    { text: 'Telefone', value: 'telefone' },
-                ],
-                tecnicos: [
-                    {
-                        codigo: '1',
-                        nome: 'Daniel',
-                        telefone: '(34) 99999-9999',
-                    },
-                    {
-                        codigo: '2',
-                        nome: 'Diego',
-                        telefone: '(34) 99999-9999',
-                    },
-                    {
-                        codigo: '3',
-                        nome: 'Heitor',
-                        telefone: '(34) 99999-9999',
-                    },
-                    {
-                        codigo: '4',
-                        nome: 'Jaílson',
-                        telefone: '(34) 99999-9999',
-                    },
-                    {
-                        codigo: '5',
-                        nome: 'Luiz Felipe',
-                        telefone: '(34) 99999-9999',
-                    },
-                    {
-                        codigo: '6',
-                        nome: 'Rickson',
-                        telefone: '(34) 99999-9999',
-                    },
-                    {
-                        codigo: '7',
-                        nome: 'Richard',
-                        telefone: '(34) 99999-9999',
-                    },
-                    {
-                        codigo: '8',
-                        nome: 'Rudielle',
-                        telefone: '(34) 99999-9999',
-                    }
-                ]
+                {
+                    text: '#',
+                    align: 'start',
+                    sortable: true,
+                    value: 'codigo',
+                },
+                { text: 'Nome', value: 'nome' },
+                { text: 'Telefone', value: 'telefone' },
+            ],
+                
         }
+    },
+    methods:{
+        loadTecnicos(){
+            this.$store.dispatch('loadTecnicos')
+        }
+    },
+    computed:{
+        tecnicos(){
+            return this.$store.getters.tecnicos
+        }
+    },
+    created(){
+        this.loadTecnicos()
     }
 }
 </script>

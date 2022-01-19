@@ -8,18 +8,29 @@
                 <v-col cols="12" sm="6">
                     <label for="nome_tecnico" class="form-label">Nome:</label>
                     <v-text-field type="text" id="nome_tecnico" outlined dense v-model="nome" maxlength="255" 
-                    :rules="[rules.required, rules.nome]"></v-text-field>
+                    :rules="[rules.required, rules.nome]" autocomplete="off"></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
                     <label for="telefone_tecnico" class="form-label">Telefone:</label>
-                    <v-text-field type="text" id="telefone_tecnico" v-model="telefone" maxlength="15" onkeypress="mask(this, mphone)"
-                    onblur="mask(this, mphone);" outlined dense :rules="[rules.telefone]"></v-text-field>
+                    <v-text-field type="text" id="telefone_tecnico" v-model="telefone" maxlength="15" outlined dense 
+                    :rules="[rules.telefone]" autocomplete="off" v-mask="telefoneMask"></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="12">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" 
+                        value="1" @click="ativo = 1" checked/>
+                        <label class="form-check-label" for="inlineRadio1" @click="ativo = 1">Ativo</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" 
+                        value="0" @click="ativo = 0"/>
+                        <label class="form-check-label" for="inlineRadio2" @click="ativo = 0">Inativo</label>
+                    </div>
                 </v-col>
             </v-row>
-            <div class="col-12 mt-5">
-                <button  class="btn btn-red" @click="cadTecDialog = false"
-                :disabled="noNome || shortNome || shortTelefone">Cadastrar Técnico</button>
-                <a class="btn btn-black ml-2" @click="cadTecDialog = false"> Voltar </a>
+            <div class="col-12">
+                <button  class="btn btn-red mt-5" @click="addTecnico" :disabled="noNome || shortNome || shortTelefone">Cadastrar Técnico</button>
+                <a class="btn btn-black mt-5 ml-2" @click="cadTecDialog = false"> Voltar </a>
             </div>
         </v-card-text>
     </v-card>
@@ -31,10 +42,27 @@ export default {
         return{
             nome: '',
             telefone: '',
-            ativo: true
+            ativo: 1
+        }
+    },
+    methods:{
+        addTecnico(){
+            const tecnico = {
+                nome: this.nome,
+                telefone: this.telefone.replace(/[^\d]+/g,''),
+                ativo: this.ativo
+            }
+            this.$http.post('tecnicos.json', tecnico).then(
+                () => {
+                    window.location.reload()
+                }
+            )
         }
     },
     computed:{
+        telefoneMask(){
+            return this.$store.getters.telefoneMask
+        },
         noNome(){
             return this.nome == ''
         },

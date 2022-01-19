@@ -2,9 +2,9 @@ import Vue from 'vue'
 
 export default {
     state:{
-        tecnicos: [],
+        tecnicos: []
     },
-    mutatios:{
+    mutations:{
         setTecnicos(state, tecnicos){
             state.tecnicos = tecnicos
         }

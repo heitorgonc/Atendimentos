@@ -139,6 +139,15 @@ body, html {
 .btn-dialog:hover{
     color: #2368b6
 }
+.list-item{
+    cursor: pointer;
+}
+.list-item:hover{
+    background-color: rgb(218, 218, 218);
+}
+.list-selected{
+    color: #fff !important;
+}
 
 /* RESPONSIVITY */
 @media (max-width: 1199px) {
@@ -158,10 +167,16 @@ body, html {
     .form{
         width:50%
     }
+    .mobile-menu{
+        display: none;
+    }
 }
 @media (max-width: 990px) {
     .navCustom {
         margin-left: 0;
+    }
+    .btn-logout{
+        display: none;
     }
 }
 @media (max-width: 768px){

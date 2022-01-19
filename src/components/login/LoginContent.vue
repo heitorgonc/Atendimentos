@@ -19,11 +19,25 @@
                 <v-card-text>
                     <v-form>
                         <v-container fluid>
-                            <v-row>
-                                <v-select dense :items="tecnicos" placeholder="Técnico" v-model="tecnico" outlined hide-selected></v-select>
+                            <!-- <v-row>
+                                <v-select dense :items="tecnicos" v-model="tecnicoSelected" placeholder="Técnico" outlined hide-selected></v-select>
                             </v-row>
                             <v-row>
                                 <v-btn block color="red darken-1" class="btn" :disabled="noSelect" to="/atendimentos">Entrar</v-btn>
+                            </v-row> -->
+                            <v-row>
+                                <v-menu :close-on-click="true">
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn class="btn btn-red" v-bind="attrs" v-on="on">
+                                            Entrar
+                                        </v-btn>
+                                    </template>
+                                    <v-list>
+                                        <v-list-item v-for="(tecnico, i) in tecnicos" :key="i" to="/atendimentos">
+                                            <v-list-item-title>{{ tecnico.nome }}</v-list-item-title>
+                                        </v-list-item>
+                                    </v-list>
+                                </v-menu>
                             </v-row>
                         </v-container>
                     </v-form>
@@ -35,21 +49,21 @@
 
 <script>
 export default {
-    data(){
-        return{
-            tecnico: '',
-            tecnicos: ['Daniel', 'Diego', 'Heitor', 'Jaílson', 'Luiz Felipe', 'Rudielle', 'Richard', 'Rickson']
-        }
-    },
     methods:{
         loadTecnicos(){
             this.$store.dispatch('loadTecnicos')
         }
     },
     computed:{
+        tecnicos(){
+            return this.$store.getters.tecnicos
+        },
         noSelect(){
             return this.tecnico == ''
         }
+    },
+    created(){
+        this.loadTecnicos()
     }
 }
 </script>

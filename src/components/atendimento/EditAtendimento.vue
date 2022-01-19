@@ -4,13 +4,8 @@
             <h1 class="title">Editar Atendimento</h1>
             <form class="row g-3">
                 <div class="col-md-6">
-                    <label for="funcionario" class="form-label">Funcionário:</label>
-                    <v-text-field type="text" maxlength="255" name='funcionario' outlined dense
-                    id="funcionario" :rules="[rules.nome]" v-model="funcionario"></v-text-field>
-                </div>
-                <div class="col-md-6">
                     <v-layout justify-space-between>
-                        <label for="client" class="form-label">Cliente / Razão Social</label>
+                        <label for="client" class="form-label">Razão Social</label>
                         <v-dialog v-model="cadCliDialog" persistent max-width="600px">
                             <template v-slot:activator="{on, attrs}">
                                 <span class="btn-dialog" v-bind="attrs" v-on="on">Deseja criar um novo Cliente ?</span>
@@ -18,10 +13,23 @@
                             <CadCliAtend></CadCliAtend>
                         </v-dialog>
                     </v-layout>
-                    <v-select :items="clientes" outlined dense placeholder="Selecione o Cliente" v-model="cliente"
-                    hide-selected></v-select>
+                    <v-menu offset-y>
+                        <template v-slot:activator="{on, attrs}">
+                            <v-card  outlined class="pa-2" v-bind="attrs" v-on="on">
+                                <v-layout justify-space-between>
+                                    <span v-text="cliente.fantasia"></span>
+                                    <v-icon>mdi-chevron-down</v-icon>
+                                </v-layout>
+                            </v-card>
+                        </template>
+                        <v-list>
+                            <v-list-item v-for="(cli, i) in clientes" :key="i" class="list-item" @click="cliente=cli">
+                                <v-list-item-title v-text="cli.fantasia"></v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <v-layout justify-space-between>
                         <label for="selectTecnico" class="form-label">Técnico</label>
                         <v-dialog v-model="cadTecDialog" persistent max-width="600px">
@@ -31,25 +39,37 @@
                             <CadTecAtend></CadTecAtend>
                         </v-dialog>
                     </v-layout>
-                    <v-select :items="tecnicos" outlined dense placeholder="Selecione o Tecnico" v-model="tecnico"
-                    hide-selected></v-select>
+                    <v-menu offset-y>
+                        <template v-slot:activator="{on, attrs}">
+                            <v-card v-bind="attrs" v-on="on" outlined class="pa-2">
+                                <v-layout justify-space-between>
+                                    <span v-text="tecnico.nome"></span>
+                                    <v-icon>mdi-chevron-down</v-icon>
+                                </v-layout>
+                            </v-card>
+                        </template>
+                        <v-list>
+                            <v-list-item v-for="(tec, i) in tecnicos" :key="i" class="list-item" @click="tecnico=tec">
+                                <v-list-item-title v-text="tec.nome"></v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+                </div>
+                <div class="col-md-12">
+                    <label for="solicitante" class="form-label">Solicitante:</label>
+                    <v-text-field type="text" maxlength="255" name='solicitante' outlined dense autocomplete="off"
+                    id="solicitente" :rules="[rules.nome]" v-model="solicitante"></v-text-field>
                 </div>
                 <div class="col-12">
                     <label for="relato" class="form-label">Relato</label>
                     <v-textarea id="relato" rows="5" v-model="relato" :rules="[rules.relato, rules.required]" 
                     maxlength="399" outlined spellcheck="false" dense></v-textarea>
                 </div>
-                <div class="col-12 mt-5">
-                    <router-link to="/atendimentos" tag="bottom">
-                        <bottom class="btn btn-red mr-2"  
-                        :disabled="noTecnico || tecnicoNotSelected || noCliente || clienteNotSelected 
-                        || shortRelato || noRelato || shortFuncionario">
-                            Atualizar Atendimento
-                        </bottom>
-                    </router-link>
-                    <router-link to="/atendimentos" tag="button">
-                        <a class="btn btn-dark"> Voltar </a>
-                    </router-link>
+                <div class="col-12">
+                    <v-btn class="btn btn-red mt-5" :disabled="shortRelato || noRelato || noTecnico || tecnicoNotSelected ||
+                    noCliente || clienteNotSelected" @click="editAtendimento"
+                    >Atualizar Atendimento</v-btn>
+                    <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos"> Voltar </v-btn>
                 </div>
             </form>
         </div>
@@ -61,42 +81,87 @@ const CadTecAtend = () => import('../templates/dialogs/CadTecAtend')
 const CadCliAtend = () => import('../templates/dialogs/CadClienteAtend.vue')
 
 export default {
-    props:['codigo'],
     components:{
         CadTecAtend,
         CadCliAtend
     },
     data(){
         return{
-            tecnicos:['Daniel', 'Diego', 'Heitor', 'Jaílson', 'Luiz Felipe', 'Rudielle', 'Richard', 'Rickson'],
-            clientes:['Polo Norte', 'Mega Leite', 'Leal', 'Udipres', 'Cozini'],
-            tecnico: this.$route.query.atendimento.tecnico,
-            cliente: this.$route.query.atendimento.cliente,
+            codigo: this.$route.query.atendimento.codigo,
+            tecnicoCodigo: this.$route.query.atendimento.tecnicoCodigo,
+            clienteCodigo: this.$route.query.atendimento.clienteCodigo,
+            tecnico: {
+                codigo: 0, 
+                nome:'Selecione o Técnico', 
+                telefone: '', 
+                ativo: 1
+            },
+            cliente:{
+                codigo: 0,
+                fantasia:'Selecione o Cliente',
+                telefone:'',
+                cnpj: '',
+                contato: '',
+                ativo: 1
+            },
             relato: this.$route.query.atendimento.relato,
-            ativo: this.$route.query.atendimento.ativo,
-            funcionario: this.$route.query.atendimento.funcionario
+            solicitante: this.$route.query.atendimento.solicitante,
+            data: new Date(),
         }
     },
+    methods:{
+        editAtendimento(){
+            const atendimento = {
+                codigo: this.codigo,
+                tecnicoCodigo: this.tecnico.codigo,
+                clienteCodigo: this.cliente.codigo,
+                solicitante: this.solicitante,
+                relato: this.relato,
+                data: this.data
+            }
+            this.$http.put(`atendimentos/${atendimento.codigo}.json`, atendimento).then(
+                ()=>{
+                    this.$router.push('/atendimentos')
+                }
+            )
+        },
+        loadTecnicos(){
+            this.$store.dispatch('loadTecnicos')
+        },
+        loadClientes(){
+            this.$store.dispatch('loadClientes')
+        }
+    },
+    created(){
+        this.loadClientes(),
+        this.loadTecnicos()
+    },
     computed:{
-        shortFuncionario(){
-            if(this.funcionario.length > 0){
-                return this.funcionario.length < 3
+        clientes(){
+            return this.$store.getters.clientes
+        },
+        tecnicos(){
+            return this.$store.getters.tecnicos
+        },
+        shortSolicitante(){
+            if(this.solicitante.length > 0){
+                return this.solicitante.length < 3
             }else{
-                return this.funcionario.length > 0
+                return this.solicitante.length > 0
             }
             
         },
         noTecnico(){
-            return this.tecnico == ""
+            return this.tecnico.nome == ""
         },
         tecnicoNotSelected(){
-            return this.tecnico == "Selecione o Técnico"
+            return this.tecnico.nome == "Selecione o Técnico"
         },
         noCliente(){
-            return this.cliente == ""
+            return this.cliente.fantasia == ""
         },
         clienteNotSelected(){
-            return this.cliente == "Selecione o Cliente"
+            return this.cliente.fantasia == "Selecione o Cliente"
         },
         noRelato(){
             return this.relato == ""

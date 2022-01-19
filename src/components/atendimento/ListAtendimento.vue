@@ -13,8 +13,8 @@
                             </v-col>
                         </v-row>
                     </v-card-title>
-                    <v-data-table :headers="header" :items="atendimentos"  class="elevation-1 mt-5" :search="search" dense
-                    :items-per-page="itemsPerPage" hide-default-footer :page.sync="page" @page-count="pageCount = $event">
+                    <v-data-table :headers="header" :items="atendimentos"  class="elevation-1 mt-5" :search="search" dense :items-per-page="itemsPerPage" 
+                    hide-default-footer :page.sync="page" @page-count="pageCount = $event">
                         <template v-slot:[`item.actions`]="{ item }">
                             <v-btn :to="{ name: 'editarAtendimento', params:{codigo: item.codigo}, query:{atendimento: item}}" 
                             class="edit" plain icon>
@@ -29,9 +29,9 @@
                     </div>
                 </v-card>
             </template>
-            <router-link to="/atendimentos/cadastro/">
-                <a type="button" class="btn btn-red mt-5">Cadastrar Atendimento</a>
-            </router-link>
+            <div class="col-12">
+                <v-btn class="btn btn-red mt-5" to="/atendimentos/cadastro">Cadastrar Atendimento</v-btn>
+            </div>
         </div>
     </v-container>
 </template>
@@ -47,20 +47,26 @@ export default {
             dialog: false,
             header:[
                 {text: '#', align: 'start', sortable: 'true', value: 'codigo' },
-                {text: 'Técnico', value: 'tecnico'},
-                {text: 'Funcionário', value: 'funcionario'},
-                {text: 'Cliente', value: 'cliente'},
+                {text: 'Técnico', value: 'tecnicoCodigo'},
+                {text: 'Cliente', value: 'clienteCodigo'},
+                {text: 'Solicitante', value: 'solicitante'},
                 {text: 'Relato', value: 'relato'},
-                {text: 'Data', value: 'date'},
+                {text: 'Data', value: 'data'},
                 {text: 'Ações', value: 'actions', sortable: false}
-            ],
-            atendimentos:[
-                {codigo: '1', tecnico:'Rickson', funcionario: 'Matheus', cliente:'Polo Norte', relato: 'Emissão de certificado digital', ativo: true, date:'07/01/2022'},
-                {codigo: '2', tecnico:'Jaílson', funcionario: 'Leonardo', cliente:'Mega Leite', relato:'Dúvidas NFe', ativo: true, date:'07/01/2022'},
-                {codigo: '3', tecnico:'Luiz Felipe', funcionario: ' Diogo',cliente:'Udipres', relato:'Atualização de certificado digital', ativo: false, date:'07/01/2022'},
-                {codigo: '4', tecnico:'Daniel', funcionario: 'Ana', cliente:'Leal', relato:'Instalação de sistema', ativo: true, date:'07/01/2022'},
-                {codigo: '5', tecnico:'Rudielle', funcionario: 'Alessandra', cliente:'Cozini', relato:'Balanço com corretor', ativo: true, date:'07/01/2022'}
             ]
+        }
+    },
+    methods:{
+        loadAtendimentos(){
+            this.$store.dispatch('loadAtendimentos')
+        },
+    },
+    created(){
+        this.loadAtendimentos()
+    },
+    computed:{
+        atendimentos(){
+            return this.$store.getters.atendimentos
         }
     }
 }

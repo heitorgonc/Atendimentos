@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 const RootLogin = () => import('../components/login/RootLogin')
 const LoginBar = () => import('../components/templates/bars/LoginBar')
 const AtendimentoBar = () => import('../components/templates/bars/AtendimentoBar')
+const MobileNavigator = () => import('../components/templates/navigations/MobileNavigator')
 const RootAtendimento = () => import('../components/atendimento/RootAtendimento')
 const ListAtendimento = () => import('../components/atendimento/ListAtendimento')
 const CadAtendimento =  () => import('../components/atendimento/CadAtendimento')
@@ -42,14 +43,16 @@ const routes = [
         path:'',
         components:{
           appbar: AtendimentoBar,
-          content: ListAtendimento
+          content: ListAtendimento,
+          mobilenavigator: MobileNavigator
         },
       },
       {
         path: 'cadastro/',
         components:{
           appbar: AtendimentoBar,
-          content: CadAtendimento
+          content: CadAtendimento,
+          mobilenavigator: MobileNavigator
         }
       },
       {
@@ -58,7 +61,8 @@ const routes = [
         name: 'editarAtendimento',
         components:{
           appbar: AtendimentoBar,
-          content: EditAtendimento
+          content: EditAtendimento,
+          mobilenavigator: MobileNavigator
         }
       }
     ]
@@ -73,14 +77,16 @@ const routes = [
         path: '',
         components:{
           appbar: AtendimentoBar,
-          content: ListCliente
+          content: ListCliente,
+          mobilenavigator: MobileNavigator
         }
       },
       {
         path: 'cadastro/',
         components:{
           appbar: AtendimentoBar,
-          content: CadCliente
+          content: CadCliente,
+          mobilenavigator: MobileNavigator
         }
       }
     ]
@@ -95,32 +101,20 @@ const routes = [
         path: '',
         components:{
           appbar: AtendimentoBar,
-          content: ListTecnico
+          content: ListTecnico,
+          mobilenavigator: MobileNavigator
         }
       },
       {
         path: 'cadastro/',
         components:{
           appbar: AtendimentoBar,
-          content: CadTecnico
+          content: CadTecnico,
+          mobilenavigator: MobileNavigator
         }
       }
     ]
   },
-  {
-    path: '*',
-    components:{
-      page: RootLogin
-    },
-    children:[
-      {
-        path:'',
-        components:{
-          appbar: LoginBar
-        }
-      }
-    ]
-  }
 ]
 
 const router = new VueRouter({

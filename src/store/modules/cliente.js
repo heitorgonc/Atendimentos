@@ -2,7 +2,13 @@ import Vue from "vue"
 
 export default {
     state:{
-        clientes: []
+        clientes: [],
+        cnpjMask: '##.###.###/####-##'
+    },
+    mutations:{
+        setClientes(state, clientes){
+            state.clientes = clientes
+        }
     },
     actions:{
         loadClientes({commit}){
@@ -10,13 +16,18 @@ export default {
                 const clientes = resp.data
                 if(clientes){
                     commit('setClientes', clientes)
+                    
                 }
             })
+            .catch(error => console.log(error))
         }
     },
-    mutations:{
-        setClientes(state, clientes){
-            state.clientes = clientes
+    getters:{
+        clientes(state){
+            return state.clientes
+        },
+        cnpjMask(state){
+            return state.cnpjMask
         }
     }
 }

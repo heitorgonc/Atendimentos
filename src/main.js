@@ -7,6 +7,8 @@ import './assets/css/bootstrap.min.css';
 // import './assets/js/bootstrap.min.js'
 import './plugins/axios'
 import store from './store/store'
+import { VueMaskDirective } from 'v-mask'
+Vue.directive('mask', VueMaskDirective);
 
 Vue.config.productionTip = false
 

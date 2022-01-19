@@ -21,12 +21,10 @@
                     </div>
                 </v-card>
             </template>
-            <router-link to="/clientes/cadastro/">
-                <a type="button" class="btn btn-red mt-5">Cadastrar Cliente</a>
-            </router-link>
-            <router-link to="/atendimentos/">
-                <a type="button" class="btn btn-dark mt-5 ml-2">Voltar</a>
-            </router-link>
+            <div class="col-12">
+                <v-btn class="btn btn-red mt-5" to="/clientes/cadastro/">Cadastrar Cliente</v-btn>
+                <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos/">Voltar</v-btn>
+            </div>
         </div>
     </v-container>
 </template>
@@ -41,49 +39,25 @@
                 search:'',
                 headers: [
                     {text: '#', align: 'start', sortable: true, value: 'codigo'},
-                    { text: 'Nome', value: 'nome' },
                     { text: 'Fantasia', value: 'fantasia' },
                     { text: 'Telefone', value: 'telefone' },
-                    { text: 'CNPJ', value: 'cnpj' }
-                ],
-                clientes: [
-                    {
-                        codigo: '1',
-                        nome: 'Polo Norte',
-                        fantasia: 'Polo Norte',
-                        telefone: '(34) 3411-1544',
-                        cnpj: '11.111.111/1111-11'
-                    },
-                    {
-                        codigo: '2',
-                        nome: 'Mega Leite',
-                        fantasia: 'Mega Leite',
-                        telefone: '(34) 3411-6699',
-                        cnpj: '11.000.000/0000-00'
-                    },
-                    {
-                        codigo: '3',
-                        nome: 'Udipres',
-                        fantasia: 'Udipres',
-                        telefone: '(34) 3411-2255',
-                        cnpj: '00.000.000/0000-00'
-                    },
-                    {
-                        codigo: '4',
-                        nome: 'Leal',
-                        fantasia: 'Leal',
-                        telefone: '(34) 3411-8866',
-                        cnpj: '11.111.111/1111-11'
-                    },
-                    {
-                        codigo: '5',
-                        nome: 'Cozini',
-                        fantasia: 'Cozini',
-                        telefone: '(34) 3411-0077',
-                        cnpj: '11.111.111/1111-11'
-                    }
+                    { text: 'CNPJ', value: 'cnpj' },
+                    {text: 'Contato', value: 'contato'}
                 ]
             }
+        },
+        computed:{
+            clientes(){
+                return this.$store.getters.clientes
+            }
+        },
+        methods:{
+            loadClientes(){
+                this.$store.dispatch('loadClientes')
+            }
+        },
+        created(){
+            this.loadClientes()
         }
     }
 </script>

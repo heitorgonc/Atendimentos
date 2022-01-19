@@ -1,11 +1,11 @@
 <template>
-    <div class="container pa-0">
+    <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light">
                 <router-link class="navbar-brand" to="/atendimentos">
-                    <img src="../../../assets/imgs/logos/logo-hypersoft.svg" width="150" alt="Logo Hypersoft" class="img-fluid"/>
+                    <img src="../../../assets/imgs/logos/logo-hypersoft.svg" width="140" alt="Logo Hypersoft" class="img-fluid"/>
                 </router-link>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" @click="mobileMenu = true">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navCustom collapse navbar-collapse" id="navbarNav">
@@ -48,6 +48,24 @@
                         </li>
                     </ul>
                 </div>
+                <router-link to="/" tag="button" class="btn-logout">
+                    <v-icon>mdi-logout</v-icon>
+                </router-link>
             </nav>
         </div>
 </template>
+
+<script>
+export default{
+    computed:{
+        mobileMenu:{
+            get(){
+                return this.$store.getters.mobileMenu
+            },
+            set(mobileMenu){
+                this.$store.commit('setMobileMenu', mobileMenu)
+            }
+        }
+    }
+}
+</script>
