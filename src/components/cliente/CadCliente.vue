@@ -114,7 +114,7 @@ export default {
         }
     },
     beforeRouteLeave(to, from, next){
-        if( this.telefone == '' && this.fantasia == '' && this.cnpj == ''){
+        if(this.fantasia == ''){
             next()
         }else{
             if(confirm('Seus dados serão perdidos, tem certeza disso ?')){

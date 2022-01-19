@@ -93,7 +93,7 @@ export default {
             solicitante: '',
             tecnico: {
                 codigo:0, 
-                nome:'Selecione o Tecnico', 
+                nome:'Selecione o Técnico', 
                 telefone: '', 
                 ativo: 1
             },
@@ -151,7 +151,7 @@ export default {
             
         },
         noTecnico(){
-            return this.tecnico.nome == "Selecione o Tecnico"
+            return this.tecnico.nome == "Selecione o Técnico"
         },
         noCliente(){
             return this.cliente.fantasia == "Selecione o Cliente"
@@ -191,7 +191,7 @@ export default {
         this.loadClientes()
     },
     beforeRouteLeave(to, from, next){
-        if(this.relato == '' && this.tecnico.nome == 'Selecione o Tecnico' && this.cliente.fantasia == 'Selecione o Cliente'){
+        if(this.relato == ''){
             next()
         }else{
             if(confirm('Seus dados serão perdidos, tem certeza disso ?')){

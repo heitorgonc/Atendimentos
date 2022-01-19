@@ -26,18 +26,24 @@
                                 <v-btn block color="red darken-1" class="btn" :disabled="noSelect" to="/atendimentos">Entrar</v-btn>
                             </v-row> -->
                             <v-row>
-                                <v-menu :close-on-click="true">
-                                    <template v-slot:activator="{ on, attrs }">
-                                        <v-btn class="btn btn-red" v-bind="attrs" v-on="on">
-                                            Entrar
-                                        </v-btn>
+                                <v-menu offset-y>
+                                    <template v-slot:activator="{on, attrs}">
+                                        <v-card  outlined class="pa-2" v-bind="attrs" v-on="on">
+                                            <v-layout justify-space-between>
+                                                <span v-text="tecnico.nome"></span>
+                                                <v-icon>mdi-chevron-down</v-icon>
+                                            </v-layout>
+                                        </v-card>
                                     </template>
                                     <v-list>
-                                        <v-list-item v-for="(tecnico, i) in tecnicos" :key="i" to="/atendimentos">
-                                            <v-list-item-title>{{ tecnico.nome }}</v-list-item-title>
+                                        <v-list-item v-for="(tec, i) in tecnicos" :key="i" class="list-item" @click="tecnico=tec">
+                                            <v-list-item-title v-text="tec.nome"></v-list-item-title>
                                         </v-list-item>
                                     </v-list>
                                 </v-menu>
+                                <v-btn class="btn btn-red mt-5" v-bind="attrs" v-on="on" :disabled="noTecnico" to="/atendimentos">
+                                    Entrar
+                                </v-btn>
                             </v-row>
                         </v-container>
                     </v-form>
@@ -49,6 +55,16 @@
 
 <script>
 export default {
+    data(){
+        return{
+            tecnico: {
+                codigo:0, 
+                nome:'Selecione o Técnico', 
+                telefone: '', 
+                ativo: 1
+            }
+        }
+    },
     methods:{
         loadTecnicos(){
             this.$store.dispatch('loadTecnicos')
@@ -58,8 +74,8 @@ export default {
         tecnicos(){
             return this.$store.getters.tecnicos
         },
-        noSelect(){
-            return this.tecnico == ''
+        noTecnico(){
+            return this.tecnico.nome == "Selecione o Técnico"
         }
     },
     created(){

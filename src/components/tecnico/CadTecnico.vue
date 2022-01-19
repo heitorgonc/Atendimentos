@@ -87,7 +87,7 @@
             }
         },
         beforeRouteLeave(to, from, next){
-            if(this.nome == '' && this.telefone == ''){
+            if(this.nome == ''){
                 next()
             }else{
                 if(confirm('Seus dados serão perdidos, tem certeza disso ?')){
