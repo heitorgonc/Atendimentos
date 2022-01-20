@@ -53,7 +53,12 @@
                 }
                 this.$http.post('tecnicos.json', tecnico).then(
                     () => {
+                        alert('Sucesso')
                         this.clear()
+                    }
+                ).catch(
+                    () => {
+                        alert('Erro')
                     }
                 )
             },

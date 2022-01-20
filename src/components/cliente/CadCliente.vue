@@ -72,7 +72,12 @@ export default {
             }
             this.$http.post('clientes.json', cliente).then(
                 () => {
+                    alert('Sucesso')
                     this.clear()
+                }
+            ).catch(
+                () => {
+                    alert('Erro')
                 }
             )
         }

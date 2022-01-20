@@ -19,12 +19,6 @@
                 <v-card-text>
                     <v-form>
                         <v-container fluid>
-                            <!-- <v-row>
-                                <v-select dense :items="tecnicos" v-model="tecnicoSelected" placeholder="Técnico" outlined hide-selected></v-select>
-                            </v-row>
-                            <v-row>
-                                <v-btn block color="red darken-1" class="btn" :disabled="noSelect" to="/atendimentos">Entrar</v-btn>
-                            </v-row> -->
                             <v-row>
                                 <v-menu offset-y>
                                     <template v-slot:activator="{on, attrs}">
@@ -41,9 +35,7 @@
                                         </v-list-item>
                                     </v-list>
                                 </v-menu>
-                                <v-btn class="btn btn-red mt-5" v-bind="attrs" v-on="on" :disabled="noTecnico" to="/atendimentos">
-                                    Entrar
-                                </v-btn>
+                                <v-btn class="btn btn-red mt-5" :disabled="noTecnico" to="/atendimentos">Entrar</v-btn>
                             </v-row>
                         </v-container>
                     </v-form>

@@ -121,7 +121,12 @@ export default {
             }
             this.$http.put(`atendimentos/${atendimento.codigo}.json`, atendimento).then(
                 ()=>{
+                    alert('Sucesso')
                     this.$router.push('/atendimentos')
+                }
+            ).catch(
+                () => {
+                    alert('Erro')
                 }
             )
         },

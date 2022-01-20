@@ -126,7 +126,13 @@ export default {
             }
             this.$http.post('atendimentos.json', atendimento).then(
                 () => {
+                    alert("Sucesso")
                     this.clean()
+                }
+            ).catch(
+                () => {
+                    this.clean()
+                    alert("Erro")
                 }
             )
         },

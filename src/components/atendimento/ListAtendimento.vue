@@ -14,7 +14,7 @@
                         </v-row>
                     </v-card-title>
                     <v-data-table :headers="header" :items="atendimentos"  class="elevation-1 mt-5" :search="search" dense :items-per-page="itemsPerPage" 
-                    hide-default-footer :page.sync="page" @page-count="pageCount = $event">
+                    hide-default-footer :page.sync="page" @page-count="pageCount = $event" sort-by="data" :sort-desc="true">
                         <template v-slot:[`item.actions`]="{ item }">
                             <v-btn :to="{ name: 'editarAtendimento', params:{codigo: item.codigo}, query:{atendimento: item}}" 
                             class="edit" plain icon>
