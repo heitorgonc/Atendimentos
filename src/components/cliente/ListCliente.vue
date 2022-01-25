@@ -14,8 +14,17 @@
                             </v-col>
                         </v-row>
                     </v-card-title>
-                    <v-data-table :headers="headers" :items="clientes" :search="search" class="elevation-1 mt-5" dense
-                    :items-per-page="itemsPerPage" hide-default-footer :page.sync="page" @page-count="pageCount = $event"></v-data-table>
+                    <v-data-table :headers="headers" :items="clientes"  class="elevation-1 mt-5" :search="search" dense :items-per-page="itemsPerPage" 
+                    hide-default-footer :page.sync="page" @page-count="pageCount = $event">
+                        <template v-slot:[`item.actions`]="{ item }">
+                            <v-btn :to="{ name: 'editarCliente', params:{codigo: item.codigo}, query:{cliente: item}}" 
+                            class="edit" plain icon>
+                                <v-icon small>
+                                    mdi-pencil
+                                </v-icon>
+                            </v-btn>
+                        </template>
+                    </v-data-table>
                     <div class="text-center pt-2 pb-2">
                         <v-pagination v-model="page" :length="pageCount"></v-pagination>
                     </div>
@@ -42,7 +51,8 @@
                     { text: 'Fantasia', value: 'fantasia' },
                     { text: 'Telefone', value: 'telefone' },
                     { text: 'CNPJ', value: 'cnpj' },
-                    {text: 'Contato', value: 'contato'}
+                    {text: 'Contato', value: 'contato'},
+                    {text: 'Ações', value: 'actions', sortable: false}
                 ]
             }
         },

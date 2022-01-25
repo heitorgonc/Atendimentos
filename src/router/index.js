@@ -12,9 +12,11 @@ const EditAtendimento = () => import('../components/atendimento/EditAtendimento'
 const RootCliente = () => import('../components/cliente/RootCliente')
 const ListCliente = () => import('../components/cliente/ListCliente')
 const CadCliente = () => import('../components/cliente/CadCliente')
+const EditCliente = () => import('../components/cliente/EditCliente')
 const RootTecnico = () => import('../components/tecnico/RootTecnico')
 const ListTecnico = () => import('../components/tecnico/ListTecnico')
 const CadTecnico = () => import('../components/tecnico/CadTecnico')
+const EditTecnico = () => import('../components/tecnico/EditTecnico')
 
 Vue.use(VueRouter)
 
@@ -56,7 +58,7 @@ const routes = [
         }
       },
       {
-        path: ':codigo/editar/',
+        path: 'editar/:codigo/',
         props: true,
         name: 'editarAtendimento',
         components:{
@@ -88,6 +90,16 @@ const routes = [
           content: CadCliente,
           mobilenavigator: MobileNavigator
         }
+      },
+      {
+        path: 'editar/:codigo/',
+        props: true,
+        name: 'editarCliente',
+        components:{
+          appbar: AtendimentoBar,
+          content: EditCliente,
+          mobileNavigator: MobileNavigator
+        }
       }
     ]
   },
@@ -110,6 +122,16 @@ const routes = [
         components:{
           appbar: AtendimentoBar,
           content: CadTecnico,
+          mobilenavigator: MobileNavigator
+        }
+      },
+      {
+        path: 'editar/:codigo/',
+        props: true,
+        name: 'editarTecnico',
+        components:{
+          appbar: AtendimentoBar,
+          content: EditTecnico,
           mobilenavigator: MobileNavigator
         }
       }

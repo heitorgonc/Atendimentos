@@ -88,22 +88,8 @@ export default {
     data(){
         return{
             codigo: this.$route.query.atendimento.codigo,
-            tecnicoCodigo: this.$route.query.atendimento.tecnicoCodigo,
-            clienteCodigo: this.$route.query.atendimento.clienteCodigo,
-            tecnico: {
-                codigo: 0, 
-                nome:'Selecione o Técnico', 
-                telefone: '', 
-                ativo: 1
-            },
-            cliente:{
-                codigo: 0,
-                fantasia:'Selecione o Cliente',
-                telefone:'',
-                cnpj: '',
-                contato: '',
-                ativo: 1
-            },
+            tecnico: this.$route.query.atendimento.tecnico,
+            cliente: this.$route.query.atendimento.cliente,
             relato: this.$route.query.atendimento.relato,
             solicitante: this.$route.query.atendimento.solicitante,
             data: new Date(),
@@ -113,8 +99,8 @@ export default {
         editAtendimento(){
             const atendimento = {
                 codigo: this.codigo,
-                tecnicoCodigo: this.tecnico.codigo,
-                clienteCodigo: this.cliente.codigo,
+                tecnico: this.tecnico.codigo,
+                cliente: this.cliente.codigo,
                 solicitante: this.solicitante,
                 relato: this.relato,
                 data: this.data

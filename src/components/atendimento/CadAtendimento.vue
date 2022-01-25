@@ -118,8 +118,8 @@ export default {
         },
         addAtendimento(){
             const atendimento = {
-                tecnicoCodigo: this.tecnico.codigo,
-                clienteCodigo: this.cliente.codigo,
+                tecnico: this.tecnico.codigo,
+                cliente: this.cliente.codigo, 
                 solicitante: this.solicitante,
                 relato: this.relato,
                 data: this.data

@@ -199,6 +199,9 @@ body, html {
     .form-subtitle{
         font-size: x-small;
     }
+    .form{
+        width: 99%;
+    }
 }
 @media (max-width: 320px){
     .form-title{
