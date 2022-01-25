@@ -5,32 +5,6 @@
             <form class="row g-3">
                 <div class="col-md-6">
                     <v-layout justify-space-between>
-                        <label for="client" class="form-label">Razão Social</label>
-                        <v-dialog v-model="cadCliDialog" persistent max-width="600px">
-                            <template v-slot:activator="{on, attrs}">
-                                <span class="btn-dialog" v-bind="attrs" v-on="on">Deseja criar um novo Cliente ?</span>
-                            </template>
-                            <CadCliAtend></CadCliAtend>
-                        </v-dialog>
-                    </v-layout>
-                    <v-menu offset-y>
-                        <template v-slot:activator="{on, attrs}">
-                            <v-card  outlined class="pa-2" v-bind="attrs" v-on="on">
-                                <v-layout justify-space-between>
-                                    <span v-text="cliente.fantasia"></span>
-                                    <v-icon>mdi-chevron-down</v-icon>
-                                </v-layout>
-                            </v-card>
-                        </template>
-                        <v-list>
-                            <v-list-item v-for="(cli, i) in clientes" :key="i" class="list-item" @click="cliente=cli">
-                                <v-list-item-title v-text="cli.fantasia"></v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
-                </div>
-                <div class="col-md-6">
-                    <v-layout justify-space-between>
                         <label for="selectTecnico" class="form-label">Técnico</label>
                         <v-dialog v-model="cadTecDialog" persistent max-width="600px">
                             <template v-slot:activator="{on, attrs}">
@@ -51,6 +25,32 @@
                         <v-list>
                             <v-list-item v-for="(tec, i) in tecnicos" :key="i" class="list-item" @click="tecnico=tec">
                                 <v-list-item-title v-text="tec.nome"></v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+                </div>
+                <div class="col-md-6">
+                    <v-layout justify-space-between>
+                        <label for="client" class="form-label">Razão Social</label>
+                        <v-dialog v-model="cadCliDialog" persistent max-width="600px">
+                            <template v-slot:activator="{on, attrs}">
+                                <span class="btn-dialog" v-bind="attrs" v-on="on">Deseja criar um novo Cliente ?</span>
+                            </template>
+                            <CadCliAtend></CadCliAtend>
+                        </v-dialog>
+                    </v-layout>
+                    <v-menu offset-y>
+                        <template v-slot:activator="{on, attrs}">
+                            <v-card  outlined class="pa-2" v-bind="attrs" v-on="on">
+                                <v-layout justify-space-between>
+                                    <span v-text="cliente.fantasia"></span>
+                                    <v-icon>mdi-chevron-down</v-icon>
+                                </v-layout>
+                            </v-card>
+                        </template>
+                        <v-list>
+                            <v-list-item v-for="(cli, i) in clientes" :key="i" class="list-item" @click="cliente=cli">
+                                <v-list-item-title v-text="cli.fantasia"></v-list-item-title>
                             </v-list-item>
                         </v-list>
                     </v-menu>

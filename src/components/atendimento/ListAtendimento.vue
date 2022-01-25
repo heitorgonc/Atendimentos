@@ -15,6 +15,15 @@
                     </v-card-title>
                     <v-data-table :headers="headers" :items="atendimentos"  class="elevation-1 mt-5" :search="search" dense :items-per-page="itemsPerPage" 
                     hide-default-footer :page.sync="page" @page-count="pageCount = $event" sort-by="data" :sort-desc="true">
+                        <template v-slot:[`item.data`]="{item}">
+                            <span>
+                                {{new Date(item.data).getDate()+'/'
+                                +new Date(item.data).getMonth()+1+'/'
+                                +new Date(item.data).getFullYear()+' '
+                                +(new Date(item.data).getHours()-3)+':'
+                                +new Date(item.data).getMinutes()}}
+                            </span>
+                        </template>
                         <template v-slot:[`item.actions`]="{ item }">
                             <v-btn :to="{ name: 'editarAtendimento', params:{codigo: item.codigo}, query:{atendimento: item}}" 
                             class="edit" plain icon>
@@ -58,7 +67,7 @@ export default {
     methods:{
         loadAtendimentos(){
             this.$store.dispatch('loadAtendimentos')
-        },
+        }
     },
     created(){
         this.loadAtendimentos()
