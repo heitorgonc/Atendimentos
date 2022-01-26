@@ -15,10 +15,10 @@
                     <v-text-field type="text" id="telefone_cliente" v-model="telefone" maxlength="14" :rules="[rules.telefone]" 
                     dense outlined autocomplete="off" v-mask="telefoneMask"></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="6">
+                <v-col class="col-md-6">
                     <label for="cnpj" class="form-label">CNPJ:</label>
-                    <v-text-field type="text" outlined dense v-model="cnpj" maxlength="14" id="cnpj_cliente"
-                    :rules="[rules.cnpj]" autocomplete="off" v-mask="cnpjMask"></v-text-field>
+                    <v-text-field type="text" outlined dense v-model="cnpj" maxlength="18" id="cnpj_cliente" 
+                    :rules="[rules.cnpj]" autocomplete="off" v-mask='cnpjMask'></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
                     <label for="contato" class="form-label">Contato:</label>
@@ -67,9 +67,11 @@ export default {
                 ativo: this.ativo
             }
             this.$http.post('clientes.json', cliente).then(
-                () => {
-                    window.location.reload()
-                }
+                alert('Sucesso'),
+                this.cadTecDialog = false,
+                this.$router.push('/atendimentos')
+            ).catch(
+                alert('Erro'),
             )
         }
     },
@@ -93,7 +95,7 @@ export default {
         },
         shortCnpj(){
             if(this.cnpj.length > 0){
-                return this.cnpj.length < 14
+                return this.cnpj.length < 18
             }else{
                 return this.cnpj.length > 0
             }
@@ -111,7 +113,7 @@ export default {
         },
         shortFantasia(){
             if(this.fantasia.length > 0){
-                return this.fantasia.length < 3
+                return this.fantasia.length < 2
             }else{
                 return this.fantasia.length > 0
             }

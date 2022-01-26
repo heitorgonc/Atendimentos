@@ -4,18 +4,18 @@
             <h1 class="title">Editar Cliente</h1>
             <form class="row g-3">
                 <div class="col-md-6">
-                    <label for="nome_fantasia" class="form-label">Fantasia:</label>
+                    <label for="fantasia_cliente" class="form-label">Fantasia:</label>
                     <v-text-field type="text" id="fantasia_cliente" outlined dense v-model="fantasia" maxlength="255" spellcheck="false"
                     :rules="[rules.required, rules.nome]" autocomplete="off"></v-text-field>
                 </div>
                 <div class="col-md-6">
                     <label for="telefone_cliente" class="form-label">Telefone:</label>
-                    <v-text-field type="text" v-model="telefone" maxlength="14" v-mask='telefoneMask'  
+                    <v-text-field type="text" v-model="telefone" maxlength="14" v-mask='telefoneMask' id="telefone_cliente"
                     autocomplete="off" :rules="[rules.telefone]" dense outlined></v-text-field>
                 </div>
                 <div class="col-md-6">
                     <label for="cnpj" class="form-label">CNPJ:</label>
-                    <v-text-field type="text" outlined dense v-model="cnpj" maxlength="18" id="cnpj_cliente" 
+                    <v-text-field type="text" outlined dense v-model="cnpj" maxlength="18" id="cnpj" 
                     :rules="[rules.cnpj]" autocomplete="off" v-mask='cnpjMask'></v-text-field>
                 </div>
                 <div class="col-md-6">
@@ -104,7 +104,7 @@ export default {
         },
         shortFantasia(){
             if(this.fantasia.length > 0){
-                return this.fantasia.length < 3
+                return this.fantasia.length < 2
             }else{
                 return this.fantasia.length > 0
             }

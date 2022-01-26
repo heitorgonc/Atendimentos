@@ -30,12 +30,12 @@
                                         </v-card>
                                     </template>
                                     <v-list>
-                                        <v-list-item v-for="(tec, i) in tecnicos" :key="i" class="list-item" @click="tecnico=tec">
+                                        <v-list-item v-for="(tec, i) in tecnicos" :key="i" class="list-item" @click="saveUser(tec)">
                                             <v-list-item-title v-text="tec.nome"></v-list-item-title>
                                         </v-list-item>
                                     </v-list>
                                 </v-menu>
-                                <v-btn class="btn btn-red mt-5" :disabled="noTecnico" to="/atendimentos">Entrar</v-btn>
+                                <v-btn class="btn btn-red mt-5"  to="/atendimentos" :disabled="noTecnico">Entrar</v-btn>
                             </v-row>
                         </v-container>
                     </v-form>
@@ -49,26 +49,40 @@
 export default {
     data(){
         return{
-            tecnico: {
-                codigo:0, 
-                nome:'Selecione o Técnico', 
-                telefone: '', 
-                ativo: 1
+            tecnico:{
+                codigo: 0,
+                nome: 'Selecione o Técnico',
+                telefone: '',
+                ativo: 1 
             }
         }
     },
     methods:{
         loadTecnicos(){
             this.$store.dispatch('loadTecnicos')
+        },
+        saveUser(tec){
+            this.tecnico = tec
+            this.tecnicoLogin = tec
         }
     },
     computed:{
+        tecnicoLogin:{
+            get(){
+                return this.$store.getters.tecnicoLogin
+            },
+            set(tecnico){
+                this.$store.commit('setTecLogin', tecnico)
+            }
+            
+        },
         tecnicos(){
             return this.$store.getters.tecnicos
         },
         noTecnico(){
-            return this.tecnico.nome == "Selecione o Técnico"
+            return this.tecnico.nome == 'Selecione o Técnico'
         }
+        
     },
     created(){
         this.loadTecnicos()

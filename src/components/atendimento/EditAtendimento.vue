@@ -57,12 +57,12 @@
                 </div>
                 <div class="col-md-12">
                     <label for="solicitante" class="form-label">Solicitante:</label>
-                    <v-text-field type="text" maxlength="255" name='solicitante' outlined dense autocomplete="off"
-                    id="solicitente" :rules="[rules.nome]" v-model="solicitante"></v-text-field>
+                    <v-text-field type="text" maxlength="255" outlined dense autocomplete="off"
+                    id="solicitante" :rules="[rules.nome]" v-model="solicitante"></v-text-field>
                 </div>
                 <div class="col-12">
                     <label for="relato" class="form-label">Relato</label>
-                    <v-textarea id="relato" rows="5" v-model="relato" :rules="[rules.relato, rules.required]" 
+                    <v-textarea id="relato" rows="5" v-model="relato" :rules="[rules.relato, rules.required]"
                     maxlength="399" outlined spellcheck="false" dense></v-textarea>
                 </div>
                 <div class="col-12">

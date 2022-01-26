@@ -17,7 +17,7 @@
                     </v-layout>
                     <v-menu offset-y>
                         <template v-slot:activator="{on, attrs}">
-                            <v-card  outlined class="pa-2" v-bind="attrs" v-on="on">
+                            <v-card  outlined class="pa-2" v-bind="attrs" v-on="on" id="cliente">
                                 <v-layout justify-space-between>
                                     <span v-text="cliente.fantasia"></span>
                                     <v-icon>mdi-chevron-down</v-icon>
@@ -45,7 +45,7 @@
                     </v-layout>
                     <v-menu offset-y>
                         <template v-slot:activator="{on, attrs}">
-                            <v-card v-bind="attrs" v-on="on" outlined class="pa-2">
+                            <v-card v-bind="attrs" v-on="on" outlined class="pa-2" id="tecnico">
                                 <v-layout justify-space-between>
                                     <span v-text="tecnico.nome"></span>
                                     <v-icon>mdi-chevron-down</v-icon>
@@ -61,7 +61,7 @@
                 </div>
                 <div class="col-md-12">
                     <label for="solicitante" class="form-label">Solicitante</label>
-                    <v-text-field type="text" maxlength="255" name='solicitante' outlined dense autocomplete="off"
+                    <v-text-field type="text" maxlength="255" outlined dense autocomplete="off"
                     id="solicitante" :rules="[rules.nome]" v-model="solicitante"></v-text-field>
                 </div>
                 <div class="col-12">
@@ -92,9 +92,9 @@ export default {
         return {
             solicitante: '',
             tecnico: {
-                codigo:0, 
-                nome:'Selecione o Técnico', 
-                telefone: '', 
+                codigo: 0,
+                nome: 'Selecione o Técnico',
+                telefone: '',
                 ativo: 1
             },
             cliente:{
@@ -115,6 +115,9 @@ export default {
         },
         loadClientes(){
             this.$store.dispatch('loadClientes')
+        },
+        loadTecnico(){
+            this.tecnico = this.$store.getters.tecnicoLogin
         },
         addAtendimento(){
             const atendimento = {
@@ -194,7 +197,8 @@ export default {
     },
     created(){
         this.loadTecnicos(),
-        this.loadClientes()
+        this.loadClientes(),
+        this.loadTecnico()
     },
     beforeRouteLeave(to, from, next){
         if(this.relato == ''){

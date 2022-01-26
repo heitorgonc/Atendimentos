@@ -53,9 +53,11 @@ export default {
                 ativo: this.ativo
             }
             this.$http.post('tecnicos.json', tecnico).then(
-                () => {
-                    window.location.reload()
-                }
+                alert('Sucesso'),
+                this.cadTecDialog = false,
+                this.$router.push('/atendimentos')
+            ).catch(
+                alert('Erro'),
             )
         }
     },

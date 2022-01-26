@@ -73,7 +73,7 @@
                 return this.nome == ''
             },
             shortNome(){
-                return this.nome.length < 3
+                return this.nome.length < 2
             },
             shortTelefone(){
                 if(this.telefone.length > 0){

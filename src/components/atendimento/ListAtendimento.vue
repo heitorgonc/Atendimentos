@@ -66,8 +66,10 @@ export default {
     },
     methods:{
         loadAtendimentos(){
-            this.$store.dispatch('loadAtendimentos')
-        }
+            const page = this.page
+            const itemsPerPage = this.itemsPerPage
+            this.$store.dispatch('loadAtendimentos', page, itemsPerPage)
+        },
     },
     created(){
         this.loadAtendimentos()

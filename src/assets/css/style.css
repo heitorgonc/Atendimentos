@@ -81,6 +81,10 @@ body, html {
     color: rgba(0, 0, 0, 0.658);
 }
 
+.form-label{
+    user-select: none;
+}
+
 /* STYLE BUTTONS/LINKS*/
 .edit {
     text-decoration: none;
