@@ -12,7 +12,7 @@
                 </v-col>
                 <v-col cols="12" sm="6">
                     <label for="telefone_tecnico" class="form-label">Telefone:</label>
-                    <v-text-field type="text" id="telefone_tecnico" v-model="telefone" maxlength="15" outlined dense 
+                    <v-text-field type="text" id="telefone_tecnico" v-model="telefone" maxlength="14" outlined dense 
                     :rules="[rules.telefone]" autocomplete="off" v-mask="telefoneMask"></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="12">
@@ -54,11 +54,9 @@ export default {
             }
             this.$http.post('tecnicos.json', tecnico).then(
                 alert('Sucesso'),
-                this.cadTecDialog = false,
-                this.$router.push('/atendimentos')
-            ).catch(
-                alert('Erro'),
-            )
+                this.$router.push('/atendimentos'),
+                this.cadTecDialog = false
+            ).catch(error => console.log(error))
         }
     },
     computed:{
@@ -69,14 +67,14 @@ export default {
             return this.nome == ''
         },
         shortNome(){
-            return this.nome.length < 3
+            return this.nome.length < 2
         },
         noTelefone(){
             return this.telefone == ''
         },
         shortTelefone(){
             if(this.telefone.length > 0){
-                return this.telefone.length < 15
+                return this.telefone.length < 14
             }else{
                 return this.telefone.length > 0
             }

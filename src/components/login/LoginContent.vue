@@ -20,21 +20,8 @@
                     <v-form>
                         <v-container fluid>
                             <v-row>
-                                <v-menu offset-y>
-                                    <template v-slot:activator="{on, attrs}">
-                                        <v-card  outlined class="pa-2" v-bind="attrs" v-on="on">
-                                            <v-layout justify-space-between>
-                                                <span v-text="tecnico.nome"></span>
-                                                <v-icon>mdi-chevron-down</v-icon>
-                                            </v-layout>
-                                        </v-card>
-                                    </template>
-                                    <v-list>
-                                        <v-list-item v-for="(tec, i) in tecnicos" :key="i" class="list-item" @click="saveUser(tec)">
-                                            <v-list-item-title v-text="tec.nome"></v-list-item-title>
-                                        </v-list-item>
-                                    </v-list>
-                                </v-menu>
+                                <v-select v-model="codLogin" :items="tecAtivos" item-text="nome" item-value="codigo" hide-selected
+                                placeholder="Selecione o Técnico" outlined dense></v-select>
                                 <v-btn class="btn btn-red mt-5"  to="/atendimentos" :disabled="noTecnico">Entrar</v-btn>
                             </v-row>
                         </v-container>
@@ -47,40 +34,26 @@
 
 <script>
 export default {
-    data(){
-        return{
-            tecnico:{
-                codigo: 0,
-                nome: 'Selecione o Técnico',
-                telefone: '',
-                ativo: 1 
-            }
-        }
-    },
     methods:{
         loadTecnicos(){
             this.$store.dispatch('loadTecnicos')
-        },
-        saveUser(tec){
-            this.tecnico = tec
-            this.tecnicoLogin = tec
         }
     },
     computed:{
-        tecnicoLogin:{
+        tecAtivos(){
+            return this.$store.getters.tecAtivos
+        },
+        codLogin:{
             get(){
-                return this.$store.getters.tecnicoLogin
+                return this.$store.getters.codLogin
             },
-            set(tecnico){
-                this.$store.commit('setTecLogin', tecnico)
+            set(codTec){
+                this.$store.commit('setCodLogin', codTec)
             }
             
         },
-        tecnicos(){
-            return this.$store.getters.tecnicos
-        },
         noTecnico(){
-            return this.tecnico.nome == 'Selecione o Técnico'
+            return this.codTec == 0
         }
         
     },

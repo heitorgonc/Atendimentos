@@ -34,7 +34,7 @@
                         </template>
                     </v-data-table>
                     <div class="pt-2 pb-2">
-                        <v-pagination v-model="page" :length="pageCount"></v-pagination>
+                        <v-pagination v-model="page" :length="maxPage" @input="loadAtendimentos"></v-pagination>
                     </div>
                 </v-card>
             </template>
@@ -49,9 +49,8 @@
 export default {
     data(){
         return{
-            page: 1,
             pageCount: 0,
-            itemsPerPage: 5,
+            maxPage: 1,
             search: '',
             headers:[
                 {text: '#', align: 'start', sortable: 'true', value: 'codigo' },
@@ -66,18 +65,46 @@ export default {
     },
     methods:{
         loadAtendimentos(){
-            const page = this.page
-            const itemsPerPage = this.itemsPerPage
-            this.$store.dispatch('loadAtendimentos', page, itemsPerPage)
+            const pagination = {
+                page: this.page,
+                // itemsPerPage: this.itemsPerPage
+                
+            }
+            this.$store.dispatch('loadAtendimentos', pagination)
         },
+        loadPageCount(){
+            this.maxPage = Math.ceil(this.totalItems / this.itemsPerPage)
+        }
+        
     },
     created(){
+        this.loadPageCount(),
         this.loadAtendimentos()
     },
     computed:{
         atendimentos(){
             return this.$store.getters.atendimentos
-        }
+        },
+        totalItems(){
+            return this.$store.getters.totalItems
+        },
+        itemsPerPage:{
+            get(){
+                return this.$store.getters.itemsPerPage
+            },
+            set(itemsPerPage){
+                this.$store.commit('setItemsPerPage', itemsPerPage)
+            }
+        },
+        page:{
+            get(){
+                return this.$store.getters.page
+            },
+            set(page){
+                return this.$store.commit('setPage', page)
+            }
+        },
+        
     }
 }
 </script>

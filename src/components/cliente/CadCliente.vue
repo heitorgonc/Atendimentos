@@ -75,11 +75,7 @@ export default {
                     alert('Sucesso')
                     this.clear()
                 }
-            ).catch(
-                () => {
-                    alert('Erro')
-                }
-            )
+            ).catch(error => console.log(error))
         }
     },
     computed:{

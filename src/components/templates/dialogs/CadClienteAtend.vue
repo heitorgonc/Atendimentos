@@ -70,9 +70,7 @@ export default {
                 alert('Sucesso'),
                 this.cadTecDialog = false,
                 this.$router.push('/atendimentos')
-            ).catch(
-                alert('Erro'),
-            )
+            ).catch(error => console.log(error))
         }
     },
     computed:{

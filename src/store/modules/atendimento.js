@@ -2,15 +2,12 @@ import Vue from 'vue'
 
 export default {
     state:{
-        tecnicoLogin: {
-            codigo: 0,
-            nome: 'Selecione o Técnico',
-            telefone: '',
-            ativo: 1
-        },
         atendimentos: [],
         cadCliDialog: false,
-        cadTecDialog: false
+        cadTecDialog: false,
+        itemsPerPage: 5,
+        page: 1,
+        totalItems: 0
     },
     mutations:{
         setAtendimentos(state, atendimentos){
@@ -22,18 +19,28 @@ export default {
         setCadTecDialog(state, cadTecDialog){
             state.cadTecDialog = cadTecDialog
         },
-        setTecLogin(state, tecnico){
-            state.tecnicoLogin = tecnico
+        setTotalItems(state, totalItems){
+            state.totalItems = totalItems
+        },
+        setItemsPerPage(state, itemsPerPage){
+            state.itemsPerPage = itemsPerPage
+        },
+        setPage(state, page){
+            state.page = page
         }
     },
     actions:{
-        loadAtendimentos({commit}, page, itemsPerPage){
-            Vue.prototype.$http(`atendimentos?page=${page}&itemsPerPage=${itemsPerPage}`).then(resp => {
+        loadAtendimentos({commit}, pagination){
+            Vue.prototype.$http(`atendimentos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}`).then(resp => {
                 const atendimentos = resp.data['hydra:member']
+                const totalItems = resp.data['hydra:totalItems']
                 if(atendimentos){
                     commit('setAtendimentos', atendimentos)
                 }
-            })
+                if(totalItems){
+                    commit('setTotalItems', totalItems)
+                }
+            }).catch(error => console.log(error))
         }
     },
     getters:{
@@ -46,8 +53,14 @@ export default {
         cadTecDialog(state){
             return state.cadTecDialog
         },
-        tecnicoLogin(state){
-            return state.tecnicoLogin
+        totalItems(state){
+            return state.totalItems
+        },
+        itemsPerPage(state){
+            return state.itemsPerPage
+        },
+        page(state){
+            return state.page
         }
     }
 }

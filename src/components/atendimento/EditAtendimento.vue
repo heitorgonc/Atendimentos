@@ -13,21 +13,8 @@
                             <CadTecAtend></CadTecAtend>
                         </v-dialog>
                     </v-layout>
-                    <v-menu offset-y>
-                        <template v-slot:activator="{on, attrs}">
-                            <v-card v-bind="attrs" v-on="on" outlined class="pa-2">
-                                <v-layout justify-space-between>
-                                    <span v-text="tecnico.nome"></span>
-                                    <v-icon>mdi-chevron-down</v-icon>
-                                </v-layout>
-                            </v-card>
-                        </template>
-                        <v-list>
-                            <v-list-item v-for="(tec, i) in tecnicos" :key="i" class="list-item" @click="tecnico=tec">
-                                <v-list-item-title v-text="tec.nome"></v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
+                    <v-select :items="tecAtivos" item-text="nome" hide-selected item-value="codigo" placeholder="Selecione o Técnico"
+                    v-model="codTec" outlined dense id="tecnico"></v-select>
                 </div>
                 <div class="col-md-6">
                     <v-layout justify-space-between>
@@ -39,21 +26,8 @@
                             <CadCliAtend></CadCliAtend>
                         </v-dialog>
                     </v-layout>
-                    <v-menu offset-y>
-                        <template v-slot:activator="{on, attrs}">
-                            <v-card  outlined class="pa-2" v-bind="attrs" v-on="on">
-                                <v-layout justify-space-between>
-                                    <span v-text="cliente.fantasia"></span>
-                                    <v-icon>mdi-chevron-down</v-icon>
-                                </v-layout>
-                            </v-card>
-                        </template>
-                        <v-list>
-                            <v-list-item v-for="(cli, i) in clientes" :key="i" class="list-item" @click="cliente=cli">
-                                <v-list-item-title v-text="cli.fantasia"></v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
+                    <v-select :items="cliAtivos" item-text="fantasia" hide-selected item-value="codigo" placeholder="Selecione o Cliente"
+                    v-model="codCli" outlined id="cliente" dense></v-select>
                 </div>
                 <div class="col-md-12">
                     <label for="solicitante" class="form-label">Solicitante:</label>
@@ -64,12 +38,9 @@
                     <label for="relato" class="form-label">Relato</label>
                     <v-textarea id="relato" rows="5" v-model="relato" :rules="[rules.relato, rules.required]"
                     maxlength="399" outlined spellcheck="false" dense></v-textarea>
-                </div>
-                <div class="col-12">
-                    <v-btn class="btn btn-red mt-5" :disabled="shortRelato || noRelato || noTecnico || tecnicoNotSelected ||
-                    noCliente || clienteNotSelected" @click="editAtendimento"
-                    >Atualizar Atendimento</v-btn>
-                    <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos"> Voltar </v-btn>
+                    <v-btn class="btn btn-red mt-5" :disabled="shortRelato || noRelato || noTecnico || noCliente" 
+                    @click="editAtendimento">Atualizar Atendimento</v-btn>
+                    <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos">Voltar</v-btn>
                 </div>
             </form>
         </div>
@@ -88,8 +59,8 @@ export default {
     data(){
         return{
             codigo: this.$route.query.atendimento.codigo,
-            tecnico: this.$route.query.atendimento.tecnico,
-            cliente: this.$route.query.atendimento.cliente,
+            codTec: this.$route.query.atendimento.tecnico.codigo,
+            codCli: this.$route.query.atendimento.cliente.codigo,
             relato: this.$route.query.atendimento.relato,
             solicitante: this.$route.query.atendimento.solicitante,
             data: new Date(),
@@ -99,8 +70,8 @@ export default {
         editAtendimento(){
             const atendimento = {
                 codigo: this.codigo,
-                tecnico: this.tecnico.codigo,
-                cliente: this.cliente.codigo,
+                tecnico: this.codTec,
+                cliente: this.codCli,
                 solicitante: this.solicitante,
                 relato: this.relato,
                 data: this.data
@@ -110,11 +81,7 @@ export default {
                     alert('Sucesso')
                     this.$router.push('/atendimentos')
                 }
-            ).catch(
-                () => {
-                    alert('Erro')
-                }
-            )
+            ).catch(error => console.log(error))
         },
         loadTecnicos(){
             this.$store.dispatch('loadTecnicos')
@@ -128,11 +95,11 @@ export default {
         this.loadTecnicos()
     },
     computed:{
-        clientes(){
-            return this.$store.getters.clientes
+        tecAtivos(){
+            return this.$store.getters.tecAtivos
         },
-        tecnicos(){
-            return this.$store.getters.tecnicos
+        cliAtivos(){
+            return this.$store.getters.cliAtivos
         },
         shortSolicitante(){
             if(this.solicitante.length > 0){
@@ -143,16 +110,10 @@ export default {
             
         },
         noTecnico(){
-            return this.tecnico.nome == ""
-        },
-        tecnicoNotSelected(){
-            return this.tecnico.nome == "Selecione o Técnico"
+            return this.codTec == 0
         },
         noCliente(){
-            return this.cliente.fantasia == ""
-        },
-        clienteNotSelected(){
-            return this.cliente.fantasia == "Selecione o Cliente"
+            return this.codCli == 0
         },
         noRelato(){
             return this.relato == ""
