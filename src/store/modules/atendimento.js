@@ -7,7 +7,8 @@ export default {
         cadTecDialog: false,
         itemsPerPage: 5,
         page: 1,
-        totalItems: 0
+        totalItems: 5,
+        maxPage: 1
     },
     mutations:{
         setAtendimentos(state, atendimentos){
@@ -27,6 +28,9 @@ export default {
         },
         setPage(state, page){
             state.page = page
+        },
+        setMaxPage(state, {itemsPerPage, totalItems}){
+            state.maxPage = Math.ceil(totalItems / itemsPerPage)
         }
     },
     actions:{
@@ -34,11 +38,11 @@ export default {
             Vue.prototype.$http(`atendimentos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}`).then(resp => {
                 const atendimentos = resp.data['hydra:member']
                 const totalItems = resp.data['hydra:totalItems']
+                const itemsPerPage = pagination.itemsPerPage
                 if(atendimentos){
                     commit('setAtendimentos', atendimentos)
-                }
-                if(totalItems){
                     commit('setTotalItems', totalItems)
+                    commit('setMaxPage', {totalItems, itemsPerPage})
                 }
             }).catch(error => console.log(error))
         }
@@ -61,6 +65,9 @@ export default {
         },
         page(state){
             return state.page
+        },
+        maxPage(state){
+            return state.maxPage
         }
     }
 }

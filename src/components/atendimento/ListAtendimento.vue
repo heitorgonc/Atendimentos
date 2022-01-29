@@ -8,13 +8,13 @@
                         <v-row>
                             <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa rápida" single-line hide-details></v-text-field>
                             <v-col cols="12" sm="2">
-                                <v-select :value="itemsPerPage" label="Itens por página" type="number" hide-selected
-                                :items="[5, 10, 25]" @input="itemsPerPage = parseInt($event, 10)"></v-select>
+                                <v-select v-model="itemsPerPage" label="Itens por página" type="number" hide-selected
+                                :items="[5, 10, 25]" @input="changeItemsPerPage"></v-select>
                             </v-col>
                         </v-row>
                     </v-card-title>
                     <v-data-table :headers="headers" :items="atendimentos"  class="elevation-1 mt-5" :search="search" dense :items-per-page="itemsPerPage" 
-                    hide-default-footer :page.sync="page" @page-count="pageCount = $event" sort-by="data" :sort-desc="true">
+                    hide-default-footer :page.sync="page" @page-count="pageCount = $event" :sort-desc="true">
                         <template v-slot:[`item.data`]="{item}">
                             <span>
                                 {{new Date(item.data).getDate()+'/'
@@ -50,7 +50,6 @@ export default {
     data(){
         return{
             pageCount: 0,
-            maxPage: 1,
             search: '',
             headers:[
                 {text: '#', align: 'start', sortable: 'true', value: 'codigo' },
@@ -67,18 +66,16 @@ export default {
         loadAtendimentos(){
             const pagination = {
                 page: this.page,
-                // itemsPerPage: this.itemsPerPage
-                
+                itemsPerPage: this.itemsPerPage
             }
-            this.$store.dispatch('loadAtendimentos', pagination)
+            this.$store.dispatch('loadAtendimentos', pagination).catch(error => console.log(error))
         },
-        loadPageCount(){
-            this.maxPage = Math.ceil(this.totalItems / this.itemsPerPage)
+        changeItemsPerPage(){
+            this.page = 1
+            this.loadAtendimentos()
         }
-        
     },
     created(){
-        this.loadPageCount(),
         this.loadAtendimentos()
     },
     computed:{
@@ -104,7 +101,14 @@ export default {
                 return this.$store.commit('setPage', page)
             }
         },
-        
+        maxPage:{
+            get(){
+                return this.$store.getters.maxPage
+            },
+            set(maxPage){
+                return this.$store.commit('setMaxPage', maxPage)
+            }
+        }
     }
 }
 </script>
