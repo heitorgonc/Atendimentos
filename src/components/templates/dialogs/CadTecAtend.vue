@@ -33,11 +33,20 @@
                 <a class="btn btn-black mt-5 ml-2" @click="cadTecDialog = false"> Voltar </a>
             </div>
         </v-card-text>
+        <SucessoBar></SucessoBar>
+        <ErroBar></ErroBar>
     </v-card>
 </template>
 
 <script>
+const SucessoBar = () => import('../bars/SucessoBar.vue')
+const ErroBar = () => import('../bars/ErroBar.vue')
+
 export default {
+    components:{
+        SucessoBar,
+        ErroBar
+    },
     data(){
         return{
             nome: '',
@@ -53,10 +62,20 @@ export default {
                 ativo: this.ativo
             }
             this.$http.post('tecnicos.json', tecnico).then(
-                alert('Sucesso'),
-                this.$router.push('/atendimentos'),
+                this.sucessoBar = true,
+                this.loadTecnicos(),
                 this.cadTecDialog = false
-            ).catch(error => console.log(error))
+            ).catch(
+                () => {
+                    this.erroBar = true
+                }
+            )
+        },
+        loadTecnicos(){
+            const pagination = {
+                page: 1
+            }
+            this.$store.dispatch('loadTecnicos', pagination)
         }
     },
     computed:{
@@ -92,6 +111,22 @@ export default {
             },
             set(cadTecDialog){
                 this.$store.commit('setCadTecDialog', cadTecDialog)
+            }
+        },
+        sucessoBar:{
+            get(){
+                return this.$store.getters.sucessoBar
+            },
+            set(sucessoBar){
+                return this.$store.commit('setSucessoBar', sucessoBar)
+            }
+        },
+        erroBar:{
+            get(){
+                return this.$store.getter.erroBar
+            },
+            set(erroBar){
+                return this.$store.commit('setErroBar', erroBar)
             }
         }
     }

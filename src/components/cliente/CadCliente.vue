@@ -39,11 +39,16 @@
                     <v-btn class="btn btn-black mt-5 ml-2" to="/clientes">Voltar</v-btn>
                 </div>
             </form>
+            <SucessoBar></SucessoBar>
+            <ErroBar></ErroBar>
         </div>
     </main>
 </template>
 
 <script>
+const SucessoBar = () => import('../templates/bars/SucessoBar.vue')
+const ErroBar = () => import('../templates/bars/ErroBar.vue')
+
 export default {
     data(){
         return{
@@ -53,6 +58,9 @@ export default {
             contato: '',
             ativo: 1
         }
+    },
+    components:{
+        SucessoBar, ErroBar
     },
     methods:{
         clear(){
@@ -72,10 +80,14 @@ export default {
             }
             this.$http.post('clientes.json', cliente).then(
                 () => {
-                    alert('Sucesso')
+                    this.sucessoBar = true
                     this.clear()
                 }
-            ).catch(error => console.log(error))
+            ).catch(
+                () => {
+                    this.erroBar = true
+                }
+            )
         }
     },
     computed:{
@@ -112,16 +124,21 @@ export default {
         },
         rules(){
             return this.$store.getters.rules
-        }
-    },
-    beforeRouteLeave(to, from, next){
-        if(this.fantasia == ''){
-            next()
-        }else{
-            if(confirm('Seus dados serão perdidos, tem certeza disso ?')){
-                next()
-            }else{
-                next(false)
+        },
+        sucessoBar:{
+            get(){
+                return this.$store.getters.sucessoBar
+            },
+            set(sucessoBar){
+                this.$store.commit('setSucessoBar', sucessoBar)
+            }
+        },
+        erroBar:{
+            get(){
+                return this.$store.getter.erroBar
+            },
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
             }
         }
     }

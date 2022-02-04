@@ -9,8 +9,8 @@
                             <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa rápida"
                             single-line hide-details></v-text-field>
                             <v-col cols="12" sm="2">
-                                <v-select :value="itemsPerPage" label="Itens por página" type="number" hide-selected
-                                :items="[5, 10, 25]" @input="itemsPerPage = parseInt($event, 10)"></v-select>
+                                <v-select v-model="itemsPerPage" label="Itens por página" type="number" hide-selected
+                                :items="[5, 10, 25]" @input="changeItemsPerPage"></v-select>
                             </v-col>
                         </v-row>
                     </v-card-title>
@@ -26,7 +26,7 @@
                         </template>
                     </v-data-table>
                     <div class="text-center pt-2 pb-2">
-                        <v-pagination v-model="page" :length="pageCount"></v-pagination>
+                        <v-pagination v-model="page" :length="maxPage" @input="loadTecnicos"></v-pagination>
                     </div>
                 </v-card>
             </template>
@@ -43,10 +43,6 @@ export default {
     data(){
         return{
             search: '',
-            page: 1,
-            pageCount: 0,
-            itemsPerPage: 5,
-            dialog: false,
             headers: [
                 {
                     text: '#',
@@ -58,21 +54,53 @@ export default {
                 { text: 'Telefone', value: 'telefone' },
                 {text: 'Ações', value: 'actions', sortable: false}
             ],
-                
+            
         }
     },
     methods:{
         loadTecnicos(){
-            this.$store.dispatch('loadTecnicos')
+            const pagination = {
+                page: this.page,
+                itemsPerPage: this.itemsPerPage
+            }
+            this.$store.dispatch('loadTecnicos', pagination)
+        },
+        changeItemsPerPage(){
+            this.page = 1
+            this.loadTecnicos()
         }
     },
     computed:{
         tecnicos(){
             return this.$store.getters.tecnicos
+        },
+        page:{
+            get(){
+                return this.$store.getters.page
+            },
+            set(page){
+                this.$store.commit('setPage', page)
+            }
+        },
+        itemsPerPage:{
+            get(){
+                return this.$store.getters.itemsPerPage
+            },
+            set(itemsPerPage){
+                this.$store.commit('setItemsPerPage', itemsPerPage)
+            }
+        },
+        maxPage(){
+            return this.$store.getters.maxPage
         }
     },
     created(){
         this.loadTecnicos()
+    },
+    beforeRouteLeave(to, from, next){
+        this.page = 1
+        this.itemsPerPage = 5
+        next()
     }
 }
 </script>

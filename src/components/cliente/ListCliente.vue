@@ -9,24 +9,22 @@
                             <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa rápida"
                             single-line hide-details></v-text-field>
                             <v-col cols="12" sm="2">
-                                <v-select :value="itemsPerPage" label="Itens por página" type="number" hide-selected
-                                :items="[5, 10, 25]" @input="itemsPerPage = parseInt($event, 10)"></v-select>
+                                <v-select v-model="itemsPerPage" label="Itens por página" type="number" hide-selected
+                                :items="[5, 10, 25]" @input="changeItemsPerPage"></v-select>
                             </v-col>
                         </v-row>
                     </v-card-title>
-                    <v-data-table :headers="headers" :items="clientes"  class="elevation-1 mt-5" :search="search" dense :items-per-page="itemsPerPage" 
-                    hide-default-footer :page.sync="page" @page-count="pageCount = $event">
+                    <v-data-table :headers="headers" :items="clientes"  class="elevation-1 mt-5" :search="search" dense  
+                    :items-per-page="itemsPerPage" hide-default-footer :page.sync="page" @page-count="pageCount = $event">
                         <template v-slot:[`item.actions`]="{ item }">
                             <v-btn :to="{ name: 'editarCliente', params:{codigo: item.codigo}, query:{cliente: item}}" 
                             class="edit" plain icon>
-                                <v-icon small>
-                                    mdi-pencil
-                                </v-icon>
+                                <v-icon small>mdi-pencil</v-icon>
                             </v-btn>
                         </template>
                     </v-data-table>
                     <div class="text-center pt-2 pb-2">
-                        <v-pagination v-model="page" :length="pageCount"></v-pagination>
+                        <v-pagination v-model="page" :length="maxPage" @input="loadClientes"></v-pagination>
                     </div>
                 </v-card>
             </template>
@@ -42,9 +40,6 @@
     export default {
         data(){
             return{
-                page: 1,
-                pageCount: 0,
-                itemsPerPage: 5,
                 search:'',
                 headers: [
                     {text: '#', align: 'start', sortable: true, value: 'codigo'},
@@ -59,15 +54,47 @@
         computed:{
             clientes(){
                 return this.$store.getters.clientes
+            },
+            page:{
+                get(){
+                    return this.$store.getters.page
+                },
+                set(page){
+                    this.$store.commit('setPage', page)
+                }
+            },
+            itemsPerPage:{
+                get(){
+                    return this.$store.getters.itemsPerPage
+                },
+                set(itemsPerPage){
+                    this.$store.commit('setItemsPerPage', itemsPerPage)
+                }
+            },
+            maxPage(){
+                return this.$store.getters.maxPage
             }
         },
         methods:{
             loadClientes(){
-                this.$store.dispatch('loadClientes')
+                const pagination = {
+                    page: this.page,
+                    itemsPerPage: this.itemsPerPage
+                }
+                this.$store.dispatch('loadClientes', pagination)
+            },
+            changeItemsPerPage(){
+                this.page = 1
+                this.loadClientes()
             }
         },
         created(){
             this.loadClientes()
+        },
+        beforeRouteLeave(to, from, next){
+            this.page = 1
+            this.itemsPerPage = 5
+            next()
         }
     }
 </script>

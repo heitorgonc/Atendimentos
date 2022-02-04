@@ -31,72 +31,86 @@
                     <v-btn class="btn btn-black mt-5 ml-2" to="/tecnicos">Voltar</v-btn>
                 </div>
             </v-form>
+            <SucessoBar></SucessoBar>
+            <ErroBar></ErroBar>
         </div>
     </main>
 </template>
 
 <script>
-    export default {
-        data(){
-            return{
-                nome: '',
-                telefone: '',
-                ativo: 1
-            }
-        },
-        methods:{
-            addTecnico(){
-                const tecnico = {
-                    nome: this.nome,
-                    telefone: this.telefone.replace(/[^\d]+/g,''),
-                    ativo: this.ativo
-                }
-                this.$http.post('tecnicos.json', tecnico).then(
-                    () => {
-                        alert('Sucesso')
-                        this.clear()
-                    }
-                ).catch(error => console.log(error))
-            },
-            clear(){
-                this.nome = ''
-                this.telefone = ''
-                this.ativo = 1
-            }
+const SucessoBar = () => import('../templates/bars/SucessoBar.vue')
+const ErroBar = () => import('../templates/bars/ErroBar.vue')
 
-        },
-        computed:{
-            telefoneMask(){
-                return this.$store.getters.telefoneMask
-            },
-            noNome(){
-                return this.nome == ''
-            },
-            shortNome(){
-                return this.nome.length < 2
-            },
-            shortTelefone(){
-                if(this.telefone.length > 0){
-                    return this.telefone.length < 14
-                }else{
-                    return this.telefone.length > 0
+export default {
+    components:{
+        SucessoBar,
+        ErroBar
+    },
+    data(){
+        return{
+            nome: '',
+            telefone: '',
+            ativo: 1
+        }
+    },
+    methods:{
+        addTecnico(){
+            const tecnico = {
+                nome: this.nome,
+                telefone: this.telefone.replace(/[^\d]+/g,''),
+                ativo: this.ativo
+            }
+            this.$http.post('tecnicos.json', tecnico).then(
+                () => {
+                    this.sucessoBar = true
+                    this.clear()
                 }
-                
+            ).catch(
+                () => { this.erroBar = true }
+            )
+        },
+        clear(){
+            this.nome = ''
+            this.telefone = ''
+            this.ativo = 1
+        }
+    },
+    computed:{
+        telefoneMask(){
+            return this.$store.getters.telefoneMask
+        },
+        noNome(){
+            return this.nome == ''
+        },
+        shortNome(){
+            return this.nome.length < 2
+        },
+        shortTelefone(){
+            if(this.telefone.length > 0){
+                return this.telefone.length < 14
+            }else{
+                return this.telefone.length > 0
+            }         
+        },
+        rules(){
+            return this.$store.getters.rules
+        },
+        sucessoBar:{
+            get(){
+               return this.$store.getters.sucessoBar
             },
-            rules(){
-                return this.$store.getters.rules
+            set(sucessoBar){
+                this.$store.commit('setSucessoBar', sucessoBar)
             }
         },
-        beforeRouteLeave(to, from, next){
-            if(this.nome == ''){
-                next()
-            }else{
-                if(confirm('Seus dados serão perdidos, tem certeza disso ?')){
-                    next()
-                }else{
-                    next(false)
-                }
+        erroBar:{
+            get(){
+                return this.$store.getter.erroBar
+            },
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
             }
         }
-    }
+    },
+}
 </script>

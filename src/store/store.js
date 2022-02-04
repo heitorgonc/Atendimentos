@@ -17,11 +17,35 @@ export default new Vuex.Store({
             telefone: value => (value.length > 13 || value.length == 0) || 'Telefone inexistente',
         },
         telefoneMask: '(##) ####-####',
-        mobileMenu: false
+        mobileMenu: false,
+        itemsPerPage: 5,
+        page: 1,
+        totalItems: 5,
+        maxPage: 1,
+        sucessoBar: false,
+        erroBar: false
     },
     mutations:{
         setMobileMenu(state, mobileMenu){
             state.mobileMenu = mobileMenu
+        },
+        setTotalItems(state, totalItems){
+            state.totalItems = totalItems
+        },
+        setItemsPerPage(state, itemsPerPage){
+            state.itemsPerPage = itemsPerPage
+        },
+        setPage(state, page){
+            state.page = page
+        },
+        setMaxPage(state, {itemsPerPage, totalItems}){
+            state.maxPage = Math.ceil(totalItems / itemsPerPage)
+        },
+        setSucessoBar(state, sucessoBar){
+            state.sucessoBar = sucessoBar
+        },
+        setErroBar(state, erroBar){
+            state.erroBar = erroBar
         }
     },
     getters:{
@@ -33,6 +57,24 @@ export default new Vuex.Store({
         },
         mobileMenu(state){
             return state.mobileMenu
+        },
+        totalItems(state){
+            return state.totalItems
+        },
+        itemsPerPage(state){
+            return state.itemsPerPage
+        },
+        page(state){
+            return state.page
+        },
+        maxPage(state){
+            return state.maxPage
+        },
+        sucessoBar(state){
+            return state.sucessoBar
+        },
+        erroBar(state){
+            return state.erroBar
         }
     },
     modules:{

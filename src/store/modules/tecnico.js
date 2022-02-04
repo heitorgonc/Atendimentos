@@ -4,7 +4,8 @@ export default {
     state:{
         tecnicos: [],
         tecAtivos: [],
-        codLogin: 0
+        codLogin: 0,
+        codTec: 0
     },
     mutations:{
         setTecnicos(state, tecnicos){
@@ -13,31 +14,44 @@ export default {
         setTecAtivos(state, tecAtivos){
             state.tecAtivos = tecAtivos
         },
-        addTecAtivo(state, tecAtivo){
-            state.tecAtivos.push(tecAtivo)
+        setCodLogin(state, codLogin){
+            state.codLogin = codLogin
         },
-        setCodLogin(state, codTec){
-            state.codLogin = codTec
+        setCodTec(state, codTec){
+            state.codTec = codTec
         }
     },
     actions:{
-        loadTecnicos({commit}){
-            Vue.prototype.$http('tecnicos.json').then(resp => {
-                const tecnicos = resp.data
+        loadTecnicos({commit}, pagination){
+            Vue.prototype.$http(`tecnicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}`).then(resp => {
+                const tecnicos = resp.data['hydra:member']
+                const totalItems = resp.data['hydra:totalItems']
+                const itemsPerPage = pagination.itemsPerPage
                 if(tecnicos){
                     commit('setTecnicos', tecnicos)
-                    const tecAtivos = []
-                    tecnicos.forEach(
-                        (tecnico) => {
-                            if(tecnico.ativo == 1){
-                                tecAtivos.push(tecnico)
-                            }
-                        }
-                    )
-                    commit('setTecAtivos', tecAtivos)
                 }
-            })
-            .catch(error => console.log(error))
+                if(itemsPerPage){
+                    commit('setTotalItems', totalItems)
+                    commit('setMaxPage', {totalItems, itemsPerPage})
+                }
+            }).catch(error => console.log(error))
+        },
+        loadTecAtivos({commit}, pagination){
+            Vue.prototype.$http(`tecnicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}
+            &nome=${pagination.nome}&ativo=${pagination.ativo}`).then(
+                resp => {
+                    const tecAtivos = resp.data['hydra:member']
+                    const totalItems = resp.data['hydra:totalItems']
+                    const itemsPerPage = pagination.itemsPerPage
+                    if(tecAtivos){
+                        commit('setTecAtivos', tecAtivos)
+                    }
+                    if(itemsPerPage){
+                        commit('setTotalItems', totalItems)
+                        commit('setMaxPage', {totalItems, itemsPerPage})
+                    }
+                }
+            ).catch(error => console.log(error))
         }
     },
     getters:{
@@ -49,6 +63,9 @@ export default {
         },
         codLogin(state){
             return state.codLogin
+        },
+        codTec(state){
+            return state.codTec
         }
     }
 }

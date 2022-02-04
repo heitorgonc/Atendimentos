@@ -4,30 +4,10 @@
             <h1 class="title">Editar Atendimento</h1>
             <form class="row g-3">
                 <div class="col-md-6">
-                    <v-layout justify-space-between>
-                        <label for="selectTecnico" class="form-label">Técnico</label>
-                        <v-dialog v-model="cadTecDialog" persistent max-width="600px">
-                            <template v-slot:activator="{on, attrs}">
-                                <span class="btn-dialog" v-bind="attrs" v-on="on">Deseja criar um novo Técnico ?</span>
-                            </template>
-                            <CadTecAtend></CadTecAtend>
-                        </v-dialog>
-                    </v-layout>
-                    <v-select :items="tecAtivos" item-text="nome" hide-selected item-value="codigo" placeholder="Selecione o Técnico"
-                    v-model="codTec" outlined dense id="tecnico"></v-select>
+                    <SelectTec></SelectTec>
                 </div>
                 <div class="col-md-6">
-                    <v-layout justify-space-between>
-                        <label for="client" class="form-label">Razão Social</label>
-                        <v-dialog v-model="cadCliDialog" persistent max-width="600px">
-                            <template v-slot:activator="{on, attrs}">
-                                <span class="btn-dialog" v-bind="attrs" v-on="on">Deseja criar um novo Cliente ?</span>
-                            </template>
-                            <CadCliAtend></CadCliAtend>
-                        </v-dialog>
-                    </v-layout>
-                    <v-select :items="cliAtivos" item-text="fantasia" hide-selected item-value="codigo" placeholder="Selecione o Cliente"
-                    v-model="codCli" outlined id="cliente" dense></v-select>
+                    <SelectCli></SelectCli>
                 </div>
                 <div class="col-md-12">
                     <label for="solicitante" class="form-label">Solicitante:</label>
@@ -43,24 +23,25 @@
                     <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos">Voltar</v-btn>
                 </div>
             </form>
+            <ErroBar></ErroBar>
         </div>
     </main>
 </template>
 
 <script>
-const CadTecAtend = () => import('../templates/dialogs/CadTecAtend')
-const CadCliAtend = () => import('../templates/dialogs/CadClienteAtend.vue')
+const SelectTec = () => import('../templates/inputs/SelectTec.vue')
+const SelectCli = () => import('../templates/inputs/SelectCli.vue')
+const ErroBar = () => import('../templates/bars/ErroBar.vue')
 
 export default {
     components:{
-        CadTecAtend,
-        CadCliAtend
+        SelectTec,
+        SelectCli,
+        ErroBar
     },
     data(){
         return{
             codigo: this.$route.query.atendimento.codigo,
-            codTec: this.$route.query.atendimento.tecnico.codigo,
-            codCli: this.$route.query.atendimento.cliente.codigo,
             relato: this.$route.query.atendimento.relato,
             solicitante: this.$route.query.atendimento.solicitante,
             data: new Date(),
@@ -77,37 +58,19 @@ export default {
                 data: this.data
             }
             this.$http.put(`atendimentos/${atendimento.codigo}.json`, atendimento).then(
-                ()=>{
-                    alert('Sucesso')
-                    this.$router.push('/atendimentos')
-                }
-            ).catch(error => console.log(error))
-        },
-        loadTecnicos(){
-            this.$store.dispatch('loadTecnicos')
-        },
-        loadClientes(){
-            this.$store.dispatch('loadClientes')
+                () => { this.$router.push('/atendimentos') }
+            ).catch(
+                () => { this.erroBar = true }
+            )
         }
     },
-    created(){
-        this.loadClientes(),
-        this.loadTecnicos()
-    },
     computed:{
-        tecAtivos(){
-            return this.$store.getters.tecAtivos
-        },
-        cliAtivos(){
-            return this.$store.getters.cliAtivos
-        },
         shortSolicitante(){
             if(this.solicitante.length > 0){
                 return this.solicitante.length < 3
             }else{
                 return this.solicitante.length > 0
             }
-            
         },
         noTecnico(){
             return this.codTec == 0
@@ -128,22 +91,38 @@ export default {
         rules(){
             return this.$store.getters.rules
         },
-        cadCliDialog:{
+        erroBar:{
             get(){
-                return this.$store.getters.cadCliDialog
+                return this.$store.getters.erroBar
             },
-            set(cadCliDialog){
-                this.$store.commit('setCadCliDialog', cadCliDialog)
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
             }
         },
-        cadTecDialog:{
+        codTec:{
             get(){
-                return this.$store.getters.cadTecDialog
+                return this.$store.getters.codTec
             },
-            set(cadTecDialog){
-                this.$store.commit('setCadTecDialog', cadTecDialog)
+            set(codTec){
+                this.$store.commit('setCodTec', codTec)
+            }
+        },
+        codCli:{
+            get(){
+                return this.$store.getters.codCli
+            },
+            set(codCli){
+                this.$store.commit('setCodCli', codCli)
             }
         }
+    },
+    created(){
+        this.codTec = this.$route.query.atendimento.tecnico.codigo
+        this.codCli = this.$route.query.atendimento.cliente.codigo
+    },
+    beforeRouteLeave(to, from, next){
+        this.$store.commit('setCodCli', 0)
+        next()
     }
 }
 </script>

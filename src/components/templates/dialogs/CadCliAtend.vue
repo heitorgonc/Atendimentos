@@ -40,14 +40,22 @@
             <div class="col-12">
                 <button class="btn btn-red mt-5" :disabled="noFantasia || shortCnpj ||shortTelefone || shortFantasia"
                 @click="addCliente">Cadastrar Cliente</button>
-                <a class="btn btn-dark mt-5 ml-2" @click="cadAtendDialog = false"> Voltar </a>
+                <a class="btn btn-dark mt-5 ml-2" @click="cadCliDialog = false"> Voltar </a>
             </div>
         </v-card-text>
+        <SucessoBar></SucessoBar>
+        <ErroBar></ErroBar>
     </v-card>
 </template>
 
 <script>
+const SucessoBar = () => import('../bars/SucessoBar.vue')
+const ErroBar = () => import('../bars/ErroBar.vue')
 export default {
+    components:{
+        SucessoBar,
+        ErroBar
+    },
     data(){
         return{
             telefone: '',
@@ -67,10 +75,20 @@ export default {
                 ativo: this.ativo
             }
             this.$http.post('clientes.json', cliente).then(
-                alert('Sucesso'),
-                this.cadTecDialog = false,
-                this.$router.push('/atendimentos')
-            ).catch(error => console.log(error))
+                this.sucessoBar = true,
+                this.loadClientes(),
+                this.cadCliDialog = false
+            ).catch(
+                () => {
+                    this.erroBar = true
+                }
+            )
+        },
+        loadClientes(){
+            const pagination = {
+                page: 1
+            }
+            this.$store.dispatch('loadClientes', pagination)
         }
     },
     computed:{
@@ -80,12 +98,12 @@ export default {
         cnpjMask(){
             return this.$store.getters.cnpjMask
         },
-        cadAtendDialog:{
+        cadCliDialog:{
             get(){
-                return this.$store.getters.cadAtendDialog
+                return this.$store.getters.cadCliDialog
             },
-            set(cadAtendDialog){
-                this.$store.commit('setCadCliDialog', cadAtendDialog)
+            set(cadCliDialog){
+                this.$store.commit('setCadCliDialog', cadCliDialog)
             }
         },
         rules(){
@@ -114,6 +132,22 @@ export default {
                 return this.fantasia.length < 2
             }else{
                 return this.fantasia.length > 0
+            }
+        },
+        sucessoBar:{
+            get(){
+                return this.$store.getters.sucessoBar
+            },
+            set(sucessoBar){
+                return this.$store.commit('setSucessoBar', sucessoBar)
+            }
+        },
+        erroBar:{
+            get(){
+                return this.$store.getter.erroBar
+            },
+            set(erroBar){
+                return this.$store.commit('setErroBar', erroBar)
             }
         }
     }

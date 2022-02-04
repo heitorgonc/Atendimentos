@@ -6,15 +6,17 @@
                 <v-card>
                     <v-card-title>
                         <v-row>
-                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa rápida" single-line hide-details></v-text-field>
+                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa rápida" 
+                            single-line hide-details></v-text-field>
                             <v-col cols="12" sm="2">
                                 <v-select v-model="itemsPerPage" label="Itens por página" type="number" hide-selected
                                 :items="[5, 10, 25]" @input="changeItemsPerPage"></v-select>
                             </v-col>
                         </v-row>
                     </v-card-title>
-                    <v-data-table :headers="headers" :items="atendimentos"  class="elevation-1 mt-5" :search="search" dense :items-per-page="itemsPerPage" 
-                    hide-default-footer :page.sync="page" @page-count="pageCount = $event" :sort-desc="true">
+                    <v-data-table :headers="headers" :items="atendimentos"  class="elevation-1 mt-5" :search="search" dense 
+                    :items-per-page="itemsPerPage" hide-default-footer :page.sync="page" @page-count="pageCount = $event" 
+                    :sort-desc="true">
                         <template v-slot:[`item.data`]="{item}">
                             <span>
                                 {{new Date(item.data).getDate()+'/'
@@ -49,7 +51,6 @@
 export default {
     data(){
         return{
-            pageCount: 0,
             search: '',
             headers:[
                 {text: '#', align: 'start', sortable: 'true', value: 'codigo' },
@@ -82,8 +83,8 @@ export default {
         atendimentos(){
             return this.$store.getters.atendimentos
         },
-        totalItems(){
-            return this.$store.getters.totalItems
+        maxPage(){
+            return this.$store.getters.maxPage
         },
         itemsPerPage:{
             get(){
@@ -98,17 +99,14 @@ export default {
                 return this.$store.getters.page
             },
             set(page){
-                return this.$store.commit('setPage', page)
-            }
-        },
-        maxPage:{
-            get(){
-                return this.$store.getters.maxPage
-            },
-            set(maxPage){
-                return this.$store.commit('setMaxPage', maxPage)
+                this.$store.commit('setPage', page)
             }
         }
+    },
+    beforeRouteLeave(to, from, next){
+        this.page = 1
+        this.itemsPerPage = 5
+        next()
     }
 }
 </script>

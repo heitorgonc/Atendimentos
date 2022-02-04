@@ -45,12 +45,18 @@
                     <v-btn class="btn btn-black mt-5 ml-2" to="/clientes">Voltar</v-btn>
                 </div>
             </form>
+            <ErroBar></ErroBar>
         </div>
     </main>
 </template>
 
 <script>
+const ErroBar = () => import('../templates/bars/ErroBar.vue')
+
 export default {
+    components:{
+        ErroBar
+    },
     data(){
         return{
             codigo: this.$route.query.cliente.codigo,
@@ -73,10 +79,13 @@ export default {
             }
             this.$http.put(`clientes/${cliente.codigo}.json`, cliente).then(
                 () => {
-                    alert('Sucesso')
                     this.$router.push('/clientes')
                 }
-            ).catch(error => console.log(error))
+            ).catch(
+                () => {
+                    this.erroBar = true
+                }
+            )
         }
     },
     computed:{
@@ -113,6 +122,14 @@ export default {
         },
         rules(){
             return this.$store.getters.rules
+        },
+        erroBar:{
+            get(){
+                return this.$store.getter.erroBar
+            },
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
+            }
         }
     },
 }

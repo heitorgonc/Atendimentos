@@ -1,56 +1,42 @@
 <template>
     <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light">
-                <router-link class="navbar-brand" to="/atendimentos">
-                    <img src="../../../assets/imgs/logos/logo-hypersoft.svg" width="140" alt="Logo Hypersoft" class="img-fluid"/>
-                </router-link>
+                <v-btn to="/atendimentos" text color="transparent" class="mr-5">
+                    <v-img src="../../../assets/imgs/logos/logo-hypersoft.svg" width="140" alt="Logo Hypersoft" 
+                    class="img-fluid"></v-img>
+                </v-btn>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" @click="mobileMenu = true">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navCustom collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item mr-2">
-                            <router-link to="/atendimentos/" class="link" active-class="link-active">
-                                <div class="bar-list-item">
-                                    <v-icon color="red darken-1">mdi-home-outline</v-icon>
-                                    <a class="nav-link" aria-current="page">
-                                        <router-link to="/atendimentos/" class="link" active-class="link-active">
-                                            Atendimentos
-                                        </router-link>
-                                    </a>
-                                </div>
-                            </router-link>
-                        </li>
-                        <li class="nav-item mr-2">
-                            <router-link to="/tecnicos" class="link">
-                                <div class="bar-list-item">
-                                    <v-icon color="red darken-1">mdi-face-agent</v-icon>
-                                    <a class="nav-link">
-                                        <router-link to="/tecnicos" class="link" active-class="link-active">
-                                            Técnico
-                                        </router-link>
-                                    </a>
-                                </div>
-                            </router-link>
-                        </li>
-                        <li class="nav-item mr-2">
-                            <router-link to="/clientes" class="link">
-                                <div class="bar-list-item">
-                                    <v-icon color="red darken-1">mdi-account-group-outline</v-icon>
-                                    <a class="nav-link" >
-                                        <router-link to="/clientes" class="link" active-class="link-active">
-                                            Cliente
-                                        </router-link>
-                                    </a>
-                                </div>
-                            </router-link>
-                        </li>
-                    </ul>
-                </div>
-                <router-link to="/" tag="button" class="btn-logout">
-                    <v-icon>mdi-logout</v-icon>
-                </router-link>
+                <v-flex class="navItems">
+                    <div id="navbarNav" row>
+                        <v-list-item class="nav-item link" to="/atendimentos/" active-class="link-active">
+                            <v-list-item-icon>
+                                <v-icon color="red darken-1">mdi-home-outline</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Atendimentos</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item class="nav-item link" to="/tecnicos"  active-class="link-active">
+                            <v-list-item-icon>
+                                <v-icon color="red darken-1">mdi-face-agent</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Técnico</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item class="nav-item link" to="/clientes" active-class="link-active">
+                            <v-list-item-icon>
+                            <v-icon color="red darken-1">mdi-account-group-outline</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Cliente</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item to="/" class="btn-logout">
+                            <v-list-item-icon>
+                                <v-icon>mdi-logout</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Sair</v-list-item-title>
+                        </v-list-item>
+                    </div>
+                </v-flex>
             </nav>
         </div>
 </template>
