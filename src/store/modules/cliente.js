@@ -20,7 +20,7 @@ export default {
     },
     actions:{
         loadClientes({commit}, pagination){
-            Vue.prototype.$http(`clientes?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}`).then(resp => {
+            Vue.prototype.$http(`clientes?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}&fantasia=${pagination.search}`).then(resp => {
                 const clientes = resp.data['hydra:member']
                 const totalItems = resp.data['hydra:totalItems']
                 const itemsPerPage = pagination.itemsPerPage

@@ -9,10 +9,14 @@
                 <div class="col-md-6">
                     <SelectCli></SelectCli>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <label for="solicitante" class="form-label">Solicitante:</label>
                     <v-text-field type="text" maxlength="255" outlined dense autocomplete="off"
                     id="solicitante" :rules="[rules.nome]" v-model="solicitante"></v-text-field>
+                </div>
+                <div class="col-md-6">
+                    <label for="canal" class="form-label">Canal de Comunicação</label>
+                    <v-select outlined dense id="canal" :items="canais" item-text="nome" item-value="nome" v-model="canal"></v-select>
                 </div>
                 <div class="col-12">
                     <label for="relato" class="form-label">Relato</label>
@@ -45,6 +49,12 @@ export default {
             relato: this.$route.query.atendimento.relato,
             solicitante: this.$route.query.atendimento.solicitante,
             data: new Date(),
+            canal: 'Presencial',
+            canais: [
+                {codigo: 1, nome: 'Presencial'},
+                {codigo: 2, nome: 'Whatsapp'},
+                {codigo: 3, nome: 'Skype'}
+            ]
         }
     },
     methods:{
@@ -55,6 +65,7 @@ export default {
                 cliente: this.codCli,
                 solicitante: this.solicitante,
                 relato: this.relato,
+                canal: this.canal,
                 data: this.data
             }
             this.$http.put(`atendimentos/${atendimento.codigo}.json`, atendimento).then(

@@ -17,6 +17,10 @@ const RootTecnico = () => import('../components/tecnico/RootTecnico')
 const ListTecnico = () => import('../components/tecnico/ListTecnico')
 const CadTecnico = () => import('../components/tecnico/CadTecnico')
 const EditTecnico = () => import('../components/tecnico/EditTecnico')
+const RootServico = () => import('../components/servicos/RootServico')
+const ListServico = () => import('../components/servicos/ListServico')
+const CadServico = () => import('../components/servicos/CadServico')
+const EditServico = () => import('../components/servicos/EditServico')
 
 Vue.use(VueRouter)
 
@@ -64,6 +68,40 @@ const routes = [
         components:{
           appbar: AtendimentoBar,
           content: EditAtendimento,
+          mobilenavigator: MobileNavigator
+        }
+      }
+    ]
+  },
+  {
+    path: '/servicos',
+    components:{
+      page: RootServico
+    },
+    children:[
+      {
+        path: '',
+        components:{
+          appbar: AtendimentoBar,
+          content: ListServico,
+          mobilenavigator: MobileNavigator
+        }
+      },
+      {
+        path:'cadastro/',
+        components:{
+          appbar: AtendimentoBar,
+          content: CadServico,
+          mobilenavigator: MobileNavigator
+        }
+      },
+      {
+        path: 'editar/:codigo/',
+        props: true,
+        name: 'editarServico',
+        components:{
+          appbar: AtendimentoBar,
+          content: EditServico,
           mobilenavigator: MobileNavigator
         }
       }

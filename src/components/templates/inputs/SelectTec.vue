@@ -10,7 +10,7 @@
             </v-dialog>
         </v-layout>
         <v-autocomplete v-model="codTec" :loading="loading" :items="tecAtivos" item-text="nome" item-value="codigo" :search-input.sync="search" 
-        cache-items hide-no-data hide-details placeholder="Selecione o Técnico" outlined dense></v-autocomplete>
+        cache-items hide-no-data hide-details placeholder="Selecione ou pesquise o Técnico" outlined dense></v-autocomplete>
     </div>
 </template>
 
@@ -34,7 +34,7 @@ export default {
                 ativo: 1,
                 nome: ''
             }
-            this.$store.dispatch('loadTecAtivos', pagination)
+            this.$store.dispatch('loadTecAtivos', pagination).catch(() => this.erroBar = true)
         },
         loadLogin(){
             this.codTec = this.$store.getters.codLogin
@@ -51,6 +51,14 @@ export default {
         },
         tecAtivos(){
             return this.$store.getters.tecAtivos
+        },
+        erroBar:{
+            get(){
+                return this.$store.getters.erroBar
+            },
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
+            }
         },
         codTec:{
             get(){

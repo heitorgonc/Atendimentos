@@ -75,7 +75,7 @@ export default {
             const pagination = {
                 page: 1
             }
-            this.$store.dispatch('loadTecnicos', pagination)
+            this.$store.dispatch('loadTecnicos', pagination).catch(() => this.erroBar = true)
         }
     },
     computed:{

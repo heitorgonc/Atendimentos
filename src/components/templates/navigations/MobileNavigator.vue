@@ -21,6 +21,7 @@ export default {
                 ['mdi-home-outline', 'Atendimentos', '/atendimentos'],
                 ['mdi-face-agent','Técnico', '/tecnicos'],
                 ['mdi-account-group-outline', 'Cliente', '/clientes'],
+                ['mdi-repeat', 'Serviço', '/servicos'],
                 ['mdi-logout', 'Sair', '/']
             ]
         }

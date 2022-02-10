@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import tecnico from './modules/tecnico'
 import cliente from './modules/cliente'
 import atendimento from './modules/atendimento'
+import servico from './modules/servico'
 
 Vue.use(Vuex)
 
@@ -80,6 +81,7 @@ export default new Vuex.Store({
     modules:{
         tecnico,
         cliente,
-        atendimento
+        atendimento,
+        servico
     }
 })

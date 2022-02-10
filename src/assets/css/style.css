@@ -132,12 +132,12 @@ body, html {
 }
 
 .btn-dialog{
-    color: rgba(0, 0, 0, 0.644);
+    color: #2368b6;
     font-size: small;
     user-select: none;
 }
 .btn-dialog:hover{
-    color: #2368b6
+    color: rgba(0, 0, 0, 0.644);
 }
 .list-item{
     cursor: pointer;

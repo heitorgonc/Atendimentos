@@ -25,11 +25,17 @@
                         </v-list-item>
                         <v-list-item class="nav-item link" to="/clientes" active-class="link-active">
                             <v-list-item-icon>
-                            <v-icon color="red darken-1">mdi-account-group-outline</v-icon>
+                                <v-icon color="red darken-1">mdi-account-group-outline</v-icon>
                             </v-list-item-icon>
                             <v-list-item-title>Cliente</v-list-item-title>
                         </v-list-item>
-                        <v-list-item to="/" class="btn-logout">
+                        <v-list-item class="nav-item link" to="/servicos" active-class="link-active">
+                            <v-list-item-icon>
+                                <v-icon color="red darken-1">mdi-repeat</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Serviço</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item @click="logOut" class="btn-logout">
                             <v-list-item-icon>
                                 <v-icon>mdi-logout</v-icon>
                             </v-list-item-icon>
@@ -43,6 +49,16 @@
 
 <script>
 export default{
+    methods:{
+        logOut(){
+            this.$router.push('/').then(
+                () => {
+                    const codCli = 0
+                    this.$store.commit('setCodCli', codCli)
+                }
+            ).catch(() => this.erroBar = true)
+        }
+    },
     computed:{
         mobileMenu:{
             get(){
@@ -50,6 +66,14 @@ export default{
             },
             set(mobileMenu){
                 this.$store.commit('setMobileMenu', mobileMenu)
+            }
+        },
+        erroBar:{
+            get(){
+                return this.$store.getter.erroBar
+            },
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
             }
         }
     }

@@ -4,7 +4,8 @@ export default {
     state:{
         atendimentos: [],
         cadCliDialog: false,
-        cadTecDialog: false
+        cadTecDialog: false,
+        relato: ''
     },
     mutations:{
         setAtendimentos(state, atendimentos){
@@ -15,19 +16,23 @@ export default {
         },
         setCadTecDialog(state, cadTecDialog){
             state.cadTecDialog = cadTecDialog
+        },
+        setRelato(state, relato){
+            state.relato = relato
         }
     },
     actions:{
         loadAtendimentos({commit}, pagination){
-            Vue.prototype.$http(`atendimentos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}`).then(resp => {
+            Vue.prototype.$http(`atendimentos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}&
+            cliente.fantasia=${pagination.search}&tecnico.nome=${pagination.search}`).then(resp => {
                 const atendimentos = resp.data['hydra:member']
                 const totalItems = resp.data['hydra:totalItems']
                 const itemsPerPage = pagination.itemsPerPage
                 if(atendimentos){
                     commit('setAtendimentos', atendimentos)
-                    commit('setTotalItems', totalItems)
                 }
                 if(itemsPerPage){
+                    commit('setTotalItems', totalItems)
                     commit('setMaxPage', {totalItems, itemsPerPage})
                 }
             }).catch(error => console.log(error))
@@ -42,6 +47,9 @@ export default {
         },
         cadTecDialog(state){
             return state.cadTecDialog
+        },
+        relato(state){
+            return state.relato
         }
     }
 }

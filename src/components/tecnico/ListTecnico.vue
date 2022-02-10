@@ -6,11 +6,11 @@
                 <v-card>
                     <v-card-title>
                         <v-row>
-                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa rápida"
-                            single-line hide-details></v-text-field>
+                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa"
+                            single-line hide-details @input="change"></v-text-field>
                             <v-col cols="12" sm="2">
                                 <v-select v-model="itemsPerPage" label="Itens por página" type="number" hide-selected
-                                :items="[5, 10, 25]" @input="changeItemsPerPage"></v-select>
+                                :items="[5, 10, 25]" @input="change"></v-select>
                             </v-col>
                         </v-row>
                     </v-card-title>
@@ -61,11 +61,12 @@ export default {
         loadTecnicos(){
             const pagination = {
                 page: this.page,
-                itemsPerPage: this.itemsPerPage
+                itemsPerPage: this.itemsPerPage,
+                search: this.search
             }
-            this.$store.dispatch('loadTecnicos', pagination)
+            this.$store.dispatch('loadTecnicos', pagination).catch(() => this.erroBar = true)
         },
-        changeItemsPerPage(){
+        change(){
             this.page = 1
             this.loadTecnicos()
         }
@@ -92,6 +93,14 @@ export default {
         },
         maxPage(){
             return this.$store.getters.maxPage
+        },
+        erroBar:{
+            get(){
+                return this.$store.getters.erroBar
+            },
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
+            }
         }
     },
     created(){

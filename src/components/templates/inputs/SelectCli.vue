@@ -10,7 +10,7 @@
             </v-dialog>
         </v-layout>
         <v-autocomplete v-model="codCli" :loading="loading" :items="cliAtivos" item-text="fantasia" item-value="codigo" :search-input.sync="search" 
-        cache-items hide-no-data hide-details placeholder="Selecione o Cliente" outlined dense></v-autocomplete>
+        cache-items hide-no-data hide-details placeholder="Selecione ou pesquise o Cliente" outlined dense autofocus></v-autocomplete>
   </div>
 </template>
 
@@ -34,7 +34,7 @@ export default {
                 ativo: 1,
                 fantasia: ''
             }
-            this.$store.dispatch('loadCliAtivos', pagination)
+            this.$store.dispatch('loadCliAtivos', pagination).catch(() => this.erroBar = true)
         }
     },
     computed:{
@@ -55,6 +55,14 @@ export default {
             },
             set(codCli){
                 this.$store.commit('setCodCli', codCli)
+            }
+        },
+        erroBar:{
+            get(){
+                return this.$store.getters.erroBar
+            },
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
             }
         }
     },

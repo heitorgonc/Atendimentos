@@ -18,7 +18,7 @@
                     <v-container fluid>
                         <v-row>
                             <v-autocomplete v-model="codLogin" :loading="loading" :items="tecAtivos" item-text="nome" item-value="codigo" :search-input.sync="search" 
-                            cache-items hide-no-data hide-details placeholder="Selecione o Técnico" outlined dense></v-autocomplete>
+                            cache-items hide-no-data hide-details placeholder="Selecione o Técnico" outlined dense autofocus></v-autocomplete>
                             <v-btn class="btn btn-red mt-5"  to="/atendimentos" :disabled="noTecnico">Entrar</v-btn>
                         </v-row>
                     </v-container>
@@ -43,16 +43,7 @@ export default {
                 ativo: 1,
                 nome: this.search
             }
-            this.$store.dispatch('loadTecAtivos', pagination)
-        },
-        tecLogin(tec){
-            this.codLogin = tec.codigo
-            this.search = tec.nome
-            this.loadTecAtivos()
-        },
-        keyPress(){
-            this.codLogin = 0
-            this.loadTecAtivos()
+            this.$store.dispatch('loadTecAtivos', pagination).catch(() => this.erroBar = true)
         }
     },
     computed:{
@@ -64,19 +55,19 @@ export default {
                 this.$store.commit('setCodLogin', codLogin)
             }
         },
-        codTec:{
-            get(){
-                return this.$store.getters.codTec
-            },
-            set(codTec){
-                this.$store.commit('setCodTec', codTec)
-            }
-        },
         noTecnico(){
             return this.codLogin == 0
         },
         tecAtivos(){
             return this.$store.getters.tecAtivos
+        },
+        erroBar:{
+            get(){
+                return this.$store.getter.erroBar
+            },
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
+            }
         }
     },
     created(){

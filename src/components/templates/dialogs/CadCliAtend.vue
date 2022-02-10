@@ -88,7 +88,7 @@ export default {
             const pagination = {
                 page: 1
             }
-            this.$store.dispatch('loadClientes', pagination)
+            this.$store.dispatch('loadClientes', pagination).catch(() => this.erroBar = true)
         }
     },
     computed:{

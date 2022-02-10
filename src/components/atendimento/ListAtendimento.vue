@@ -6,11 +6,11 @@
                 <v-card>
                     <v-card-title>
                         <v-row>
-                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa rápida" 
-                            single-line hide-details></v-text-field>
+                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa" 
+                            single-line hide-details @input="change"></v-text-field>
                             <v-col cols="12" sm="2">
                                 <v-select v-model="itemsPerPage" label="Itens por página" type="number" hide-selected
-                                :items="[5, 10, 25]" @input="changeItemsPerPage"></v-select>
+                                :items="[5, 10, 25]" @input="change"></v-select>
                             </v-col>
                         </v-row>
                     </v-card-title>
@@ -52,12 +52,16 @@ export default {
     data(){
         return{
             search: '',
+            searchAtend: false,
+            searchCli: false,
+            searchTec: false,
             headers:[
                 {text: '#', align: 'start', sortable: 'true', value: 'codigo' },
                 {text: 'Técnico', value: 'tecnico.nome'},
                 {text: 'Cliente', value: 'cliente.fantasia'},
                 {text: 'Solicitante', value: 'solicitante'},
                 {text: 'Relato', value: 'relato'},
+                {text: 'Canal', value: 'canal'},
                 {text: 'Data', value: 'data'},
                 {text: 'Ações', value: 'actions', sortable: false}
             ]
@@ -67,11 +71,12 @@ export default {
         loadAtendimentos(){
             const pagination = {
                 page: this.page,
-                itemsPerPage: this.itemsPerPage
+                itemsPerPage: this.itemsPerPage,
+                search: this.search
             }
-            this.$store.dispatch('loadAtendimentos', pagination).catch(error => console.log(error))
+            this.$store.dispatch('loadAtendimentos', pagination).catch(() => this.erroBar = true)
         },
-        changeItemsPerPage(){
+        change(){
             this.page = 1
             this.loadAtendimentos()
         }
@@ -100,6 +105,14 @@ export default {
             },
             set(page){
                 this.$store.commit('setPage', page)
+            }
+        },
+        erroBar:{
+            get(){
+                return this.$store.getters.erroBar
+            },
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
             }
         }
     },

@@ -23,7 +23,7 @@ export default {
     },
     actions:{
         loadTecnicos({commit}, pagination){
-            Vue.prototype.$http(`tecnicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}`).then(resp => {
+            Vue.prototype.$http(`tecnicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}&nome=${pagination.search}`).then(resp => {
                 const tecnicos = resp.data['hydra:member']
                 const totalItems = resp.data['hydra:totalItems']
                 const itemsPerPage = pagination.itemsPerPage

@@ -9,10 +9,17 @@
                 <div class="col-md-6">
                     <SelectCli></SelectCli>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <label for="solicitante" class="form-label">Solicitante</label>
                     <v-text-field type="text" maxlength="255" outlined dense autocomplete="off"
                     id="solicitante" :rules="[rules.nome]" v-model="solicitante"></v-text-field>
+                </div>
+                <div class="col-md-6">
+                    <label for="canal" class="form-label">Canal de Comunicação</label>
+                    <v-select outlined dense id="canal" :items="canais" item-text="nome" item-value="nome" v-model="canal"></v-select>
+                </div>
+                <div class="col-md-12">
+                    <SelectServico></SelectServico>
                 </div>
                 <div class="col-md-12">
                     <label for="relato" class="form-label">Relato</label>
@@ -32,18 +39,25 @@
 <script>
 const SelectTec = () => import('../templates/inputs/SelectTec.vue')
 const SelectCli = () => import('../templates/inputs/SelectCli.vue')
+const SelectServico = () => import('../templates/inputs/SelectServico.vue')
 const SucessoBar = () => import('../templates/bars/SucessoBar.vue')
 const ErroBar = () => import('../templates/bars/ErroBar.vue')
 
 export default {
     components:{
-        SucessoBar, ErroBar, SelectTec, SelectCli
+        SucessoBar, ErroBar, SelectTec, SelectCli, SelectServico
     },
     data(){
         return {
-            solicitante: '',
-            relato: '',
+            servico: 'Personalizado',
+            solicitante: 'Funcionário',
             data: new Date(),
+            canal: 'Presencial',
+            canais: [
+                {codigo: 1, nome: 'Presencial'},
+                {codigo: 2, nome: 'Whatsapp'},
+                {codigo: 3, nome: 'Skype'}
+            ]
         }
     },
     methods:{
@@ -53,7 +67,8 @@ export default {
                 cliente: this.codCli, 
                 solicitante: this.solicitante,
                 relato: this.relato,
-                data: this.data
+                data: this.data,
+                canal: this.canal
             }
             this.$http.post('atendimentos.json', atendimento).then(
                 () => {
@@ -65,11 +80,25 @@ export default {
             )
         },
         clean(){
-            this.solicitante='',
+            this.solicitante='Funcionário',
             this.relato=''
+        },
+        loadServicos(){
+            const pagination = {
+                page: 1
+            }
+            this.$store.dispatch('loadServicos', pagination).catch(() => this.erroBar = true )
         }
     },
     computed:{
+        relato:{
+            get(){
+              return this.$store.getters.relato
+            },
+            set(relato){
+                this.$store.commit('setRelato', relato)
+            }  
+        },
         shortSolicitante(){
             if(this.solicitante.length > 0){
                 return this.solicitante.length < 3
@@ -118,6 +147,9 @@ export default {
         codCli(){
             return this.$store.getters.codCli
         }
+    },
+    created(){
+        this.loadServicos()
     }
 }
 </script>
