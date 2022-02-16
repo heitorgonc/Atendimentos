@@ -9,6 +9,8 @@ import './plugins/axios'
 import store from './store/store'
 import { VueMaskDirective } from 'v-mask'
 Vue.directive('mask', VueMaskDirective);
+import VueTheMask from 'vue-the-mask'
+Vue.use(VueTheMask)
 
 Vue.config.productionTip = false
 

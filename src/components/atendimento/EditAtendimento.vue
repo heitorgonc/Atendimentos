@@ -1,7 +1,7 @@
 <template>
     <main id="main">
         <div class="container">
-            <h1 class="title">Editar Atendimento</h1>
+            <h4 class="title">Editar Atendimento</h4>
             <form class="row g-3">
                 <div class="col-md-6">
                     <SelectTec></SelectTec>
@@ -16,15 +16,19 @@
                 </div>
                 <div class="col-md-6">
                     <label for="canal" class="form-label">Canal de Comunicação</label>
-                    <v-select outlined dense id="canal" :items="canais" item-text="nome" item-value="nome" v-model="canal"></v-select>
+                    <v-select outlined dense id="canal" :items="canais" item-text="nome" item-value="nome" v-model="canal"
+                    hide-selected></v-select>
+                </div>
+                <div class="col-md-12">
+                    <SelectServico></SelectServico>
                 </div>
                 <div class="col-12">
                     <label for="relato" class="form-label">Relato</label>
-                    <v-textarea id="relato" rows="5" v-model="relato" :rules="[rules.relato, rules.required]"
+                    <v-textarea id="relato" rows="3" v-model="relato" :rules="[rules.relato, rules.required]"
                     maxlength="399" outlined spellcheck="false" dense></v-textarea>
-                    <v-btn class="btn btn-red mt-5" :disabled="shortRelato || noRelato || noTecnico || noCliente" 
+                    <v-btn class="btn btn-red" :disabled="shortRelato || noRelato || noTecnico || noCliente" 
                     @click="editAtendimento">Atualizar Atendimento</v-btn>
-                    <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos">Voltar</v-btn>
+                    <v-btn class="btn btn-black ml-2" to="/atendimentos">Voltar</v-btn>
                 </div>
             </form>
             <ErroBar></ErroBar>
@@ -35,13 +39,13 @@
 <script>
 const SelectTec = () => import('../templates/inputs/SelectTec.vue')
 const SelectCli = () => import('../templates/inputs/SelectCli.vue')
+const SelectServico = () => import('../templates/inputs/SelectServico.vue')
 const ErroBar = () => import('../templates/bars/ErroBar.vue')
+import axios from 'axios'
 
 export default {
     components:{
-        SelectTec,
-        SelectCli,
-        ErroBar
+        SelectTec, SelectCli, ErroBar, SelectServico
     },
     data(){
         return{
@@ -49,7 +53,7 @@ export default {
             relato: this.$route.query.atendimento.relato,
             solicitante: this.$route.query.atendimento.solicitante,
             data: new Date(),
-            canal: 'Presencial',
+            canal: 'Whatsapp',
             canais: [
                 {codigo: 1, nome: 'Presencial'},
                 {codigo: 2, nome: 'Whatsapp'},
@@ -65,10 +69,15 @@ export default {
                 cliente: this.codCli,
                 solicitante: this.solicitante,
                 relato: this.relato,
-                canal: this.canal,
+                canalComunicacao: this.canal,
                 data: this.data
             }
-            this.$http.put(`atendimentos/${atendimento.codigo}.json`, atendimento).then(
+            axios({
+                method: 'put',
+                url: `${this.baseUrl}atendimentos/${atendimento.codigo}.json`,
+                data: atendimento,
+                headers: {'Authorization': `${this.tokenType} ${this.token}`}
+            }).then(
                 () => { this.$router.push('/atendimentos') }
             ).catch(
                 () => { this.erroBar = true }
@@ -76,6 +85,15 @@ export default {
         }
     },
     computed:{
+        baseUrl(){
+            return this.$store.getters.baseUrl
+        },
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         shortSolicitante(){
             if(this.solicitante.length > 0){
                 return this.solicitante.length < 3
@@ -132,6 +150,7 @@ export default {
         this.codCli = this.$route.query.atendimento.cliente.codigo
     },
     beforeRouteLeave(to, from, next){
+        this.$store.commit('setCodTec', 0)
         this.$store.commit('setCodCli', 0)
         next()
     }

@@ -1,7 +1,7 @@
 <template>
     <main class="main" id="main">
         <div class="container">
-            <h1 class="title">Editar Cliente</h1>
+            <h4 class="title">Editar Cliente</h4>
             <form class="row g-3">
                 <div class="col-md-6">
                     <label for="fantasia_cliente" class="form-label">Fantasia:</label>
@@ -52,6 +52,7 @@
 
 <script>
 const ErroBar = () => import('../templates/bars/ErroBar.vue')
+import axios from 'axios'
 
 export default {
     components:{
@@ -77,7 +78,12 @@ export default {
                 contato: this.contato,
                 ativo: this.ativo
             }
-            this.$http.put(`clientes/${cliente.codigo}.json`, cliente).then(
+            axios({
+                method: 'put',
+                url: `${this.baseUrl}clientes/${cliente.codigo}.json`,
+                data: cliente,
+                headers: {'Authorization': `${this.tokenType} ${this.token}`}
+            }).then(
                 () => {
                     this.$router.push('/clientes')
                 }
@@ -89,6 +95,15 @@ export default {
         }
     },
     computed:{
+        baseUrl(){
+            return this.$store.getters.baseUrl
+        },
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         telefoneMask(){
             return this.$store.getters.telefoneMask
         },

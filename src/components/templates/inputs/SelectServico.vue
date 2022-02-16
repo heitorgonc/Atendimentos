@@ -26,7 +26,24 @@ export default {
             search: ''
         }
     },
+    methods:{
+        loadServicos(){
+            const pagination = {
+                page: 1,
+                search: this.search,
+                token: this.token,
+                tokenType: this.tokenType
+            }
+            this.$store.dispatch('listServicos', pagination).catch(() => this.erroBar = true )
+        }
+    },
     computed:{
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         servicos(){
             return this.$store.getters.servicos
         },
@@ -46,6 +63,9 @@ export default {
                 this.$store.commit('setCadServicoAtend', cadServicoAtend)
             }
         }
+    },
+    created(){
+        this.loadServicos()
     }
 }
 </script>

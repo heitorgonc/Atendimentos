@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import axios from 'axios'
 
 export default {
     state:{
@@ -15,7 +16,8 @@ export default {
     },
     actions:{
         loadServicos({commit}, pagination){
-            Vue.prototype.$http(`servicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}&servico=${pagination.search}`).then(resp => {
+            Vue.prototype.$http(`servicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}
+            &servico=${pagination.search}`).then(resp => {
                 const servicos = resp.data['hydra:member']
                 const totalItems = resp.data['hydra:totalItems']
                 const itemsPerPage = pagination.itemsPerPage
@@ -23,10 +25,28 @@ export default {
                     commit('setServicos', servicos)
                 }
                 if(itemsPerPage){
-                    commit('setTotalItems', totalItems)
                     commit('setMaxPage', {totalItems, itemsPerPage})
                 }
             }).catch(error => console.log(error))
+        },
+        listServicos({commit}, pagination){
+            axios({
+                method: 'get',
+                url: `http://localhost:8000/servicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}&servico=${pagination.search}`,
+                headers: {'Authorization': `${pagination.tokenType} ${pagination.token}`}
+            }).then(
+                resp => {
+                    const servicos = resp.data['hydra:member']
+                    const totalItems = resp.data['hydra:totalItems']
+                    const itemsPerPage = pagination.itemsPerPage
+                    if(servicos){
+                        commit('setServicos', servicos)
+                    }
+                    if(itemsPerPage){
+                        commit('setMaxPage', {totalItems, itemsPerPage})
+                    }
+                }
+            )
         }
     },
     getters:{

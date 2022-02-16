@@ -1,18 +1,15 @@
 import Vue from "vue"
+import axios from "axios"
 
 export default {
     state:{
         clientes: [],
         cnpjMask: '##.###.###/####-##',
-        cliAtivos: [],
         codCli: 0
     },
     mutations:{
         setClientes(state, clientes){
             state.clientes = clientes
-        },
-        setCliAtivos(state, cliAtivos){
-            state.cliAtivos = cliAtivos
         },
         setCodCli(state, codCli){
             state.codCli = codCli
@@ -20,7 +17,8 @@ export default {
     },
     actions:{
         loadClientes({commit}, pagination){
-            Vue.prototype.$http(`clientes?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}&fantasia=${pagination.search}`).then(resp => {
+            Vue.prototype.$http(`clientes?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}
+            &fantasia=${pagination.search}&ativo=${pagination.ativo}`).then(resp => {
                 const clientes = resp.data['hydra:member']
                 const totalItems = resp.data['hydra:totalItems']
                 const itemsPerPage = pagination.itemsPerPage
@@ -28,24 +26,25 @@ export default {
                     commit('setClientes', clientes)
                 }
                 if(itemsPerPage){
-                    commit('setTotalItems', totalItems)
                     commit('setMaxPage', {totalItems, itemsPerPage})
                 }
             }).catch(error => console.log(error))
         },
-        loadCliAtivos({commit}, pagination){
-            Vue.prototype.$http(`clientes?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}
-            &fantasia=${pagination.fantasia}&ativo=${pagination.ativo}`).then(
+        listClientes({commit}, pagination){
+            axios({
+                method: 'get',
+                url: `http://localhost:8000/clientes?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}&fantasia=${pagination.search}&ativo=${pagination.ativo}`,
+                headers: {'Authorization': `${pagination.tokenType} ${pagination.token}`}
+            }).then(
                 resp => {
-                    const cliAtivos = resp.data['hydra:member']
+                    const clientes = resp.data['hydra:member']
                     const totalItems = resp.data['hydra:totalItems']
                     const itemsPerPage = pagination.itemsPerPage
-                    if(cliAtivos){
-                        commit('setCliAtivos', cliAtivos)
+                    if(clientes){
+                        commit('setClientes', clientes)
                     }
                     if(itemsPerPage){
-                        commit('setTotalItems', totalItems)
-                        commit('setMaxPage', { totalItems, itemsPerPage })
+                        commit('setMaxPage', {totalItems, itemsPerPage})
                     }
                 }
             ).catch(error => console.log(error))
@@ -57,9 +56,6 @@ export default {
         },
         cnpjMask(state){
             return state.cnpjMask
-        },
-        cliAtivos(state){
-            return state.cliAtivos
         },
         codCli(state){
             return state.codCli

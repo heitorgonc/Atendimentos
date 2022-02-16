@@ -1,7 +1,7 @@
 <template>
     <main id="main">
         <div class="container">
-            <h2 class="title">Cadastrar Atendimento</h2>
+            <h4 class="title">Cadastrar Atendimento</h4>
             <form class="row g-3">
                 <div class="col-md-6">
                     <SelectTec></SelectTec>
@@ -16,18 +16,19 @@
                 </div>
                 <div class="col-md-6">
                     <label for="canal" class="form-label">Canal de Comunicação</label>
-                    <v-select outlined dense id="canal" :items="canais" item-text="nome" item-value="nome" v-model="canal"></v-select>
+                    <v-select outlined dense id="canal" :items="canais" item-text="nome" item-value="nome" v-model="canal"
+                    hide-selected></v-select>
                 </div>
                 <div class="col-md-12">
                     <SelectServico></SelectServico>
                 </div>
                 <div class="col-md-12">
                     <label for="relato" class="form-label">Relato</label>
-                    <v-textarea id="relato" rows="5" v-model="relato" maxlength="399" :rules="[rules.relato, rules.required]" 
+                    <v-textarea id="relato" rows="3" v-model="relato" maxlength="399" :rules="[rules.relato, rules.required]" 
                     outlined spellcheck="false" dense></v-textarea>
-                    <v-btn class="btn btn-red mt-5" :disabled="noTecnico || noCliente || noRelato || shortRelato || shortSolicitante"
+                    <v-btn class="btn btn-red" :disabled="noTecnico || noCliente || noRelato || shortRelato || shortSolicitante"
                     @click="addAtendimento">Gravar Atendimento</v-btn>
-                    <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos"> Voltar </v-btn>
+                    <v-btn class="btn btn-black ml-2" to="/atendimentos"> Voltar </v-btn>
                 </div>
                 <SucessoBar></SucessoBar>
                 <ErroBar></ErroBar>
@@ -42,6 +43,7 @@ const SelectCli = () => import('../templates/inputs/SelectCli.vue')
 const SelectServico = () => import('../templates/inputs/SelectServico.vue')
 const SucessoBar = () => import('../templates/bars/SucessoBar.vue')
 const ErroBar = () => import('../templates/bars/ErroBar.vue')
+import axios from 'axios'
 
 export default {
     components:{
@@ -52,7 +54,7 @@ export default {
             servico: 'Personalizado',
             solicitante: 'Funcionário',
             data: new Date(),
-            canal: 'Presencial',
+            canal: 'Whatsapp',
             canais: [
                 {codigo: 1, nome: 'Presencial'},
                 {codigo: 2, nome: 'Whatsapp'},
@@ -68,9 +70,14 @@ export default {
                 solicitante: this.solicitante,
                 relato: this.relato,
                 data: this.data,
-                canal: this.canal
+                canalComunicacao: this.canal
             }
-            this.$http.post('atendimentos.json', atendimento).then(
+            axios({
+                method: 'post',
+                url: `${this.baseUrl}atendimentos.json`,
+                data: atendimento,
+                headers: {'Authorization': `${this.tokenType} ${this.token}`}
+            }).then(
                 () => {
                     this.sucessoBar = true
                     this.clean()
@@ -82,15 +89,12 @@ export default {
         clean(){
             this.solicitante='Funcionário',
             this.relato=''
-        },
-        loadServicos(){
-            const pagination = {
-                page: 1
-            }
-            this.$store.dispatch('loadServicos', pagination).catch(() => this.erroBar = true )
         }
     },
     computed:{
+        baseUrl(){
+            return this.$store.getters.baseUrl
+        },
         relato:{
             get(){
               return this.$store.getters.relato
@@ -98,6 +102,34 @@ export default {
             set(relato){
                 this.$store.commit('setRelato', relato)
             }  
+        },
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
+        sucessoBar:{
+            get(){
+                return this.$store.getters.sucessoBar
+            },
+            set(sucessoBar){
+                this.$store.commit('setSucessoBar', sucessoBar)
+            }
+        },
+        erroBar:{
+            get(){
+                return this.$store.getters.erroBar
+            },
+            set(erroBar){
+                this.$store.commit('setErroBar', erroBar)
+            }
+        },
+        codTec(){
+            return this.$store.getters.codTec
+        },
+        codCli(){
+            return this.$store.getters.codCli
         },
         shortSolicitante(){
             if(this.solicitante.length > 0){
@@ -124,32 +156,7 @@ export default {
         },
         rules(){
             return this.$store.getters.rules
-        },
-        sucessoBar:{
-            get(){
-                return this.$store.getters.sucessoBar
-            },
-            set(sucessoBar){
-                this.$store.commit('setSucessoBar', sucessoBar)
-            }
-        },
-        erroBar:{
-            get(){
-                return this.$store.getters.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
-        },
-        codTec(){
-            return this.$store.getters.codTec
-        },
-        codCli(){
-            return this.$store.getters.codCli
         }
-    },
-    created(){
-        this.loadServicos()
     }
 }
 </script>

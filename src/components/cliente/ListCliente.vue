@@ -1,12 +1,12 @@
 <template>
     <v-container fluid class="content pa-0 ma-0">
         <div class="container">
-            <h1 class="title">Clientes Hypersoft</h1>
+            <h4 class="title">Clientes Hypersoft</h4>
             <template>
                 <v-card>
                     <v-card-title>
                         <v-row>
-                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa"
+                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa por Fantasia do Cliente"
                             single-line hide-details @input="change"></v-text-field>
                             <v-col cols="12" sm="2">
                                 <v-select v-model="itemsPerPage" label="Itens por página" type="number" hide-selected
@@ -41,6 +41,8 @@
         data(){
             return{
                 search:'',
+                page: 1,
+                itemsPerPage: 5,
                 headers: [
                     {text: '#', align: 'start', sortable: true, value: 'codigo'},
                     { text: 'Fantasia', value: 'fantasia' },
@@ -56,9 +58,11 @@
                 const pagination = {
                     page: this.page,
                     itemsPerPage: this.itemsPerPage,
-                    search: this.search
+                    search: this.search,
+                    token: this.token,
+                    tokenType: this.tokenType
                 }
-                this.$store.dispatch('loadClientes', pagination).catch(() => this.erroBar = true)
+                this.$store.dispatch('listClientes', pagination).catch(() => this.erroBar = true)
             },          
             change(){
                 this.page = 1,
@@ -66,24 +70,14 @@
             }
         },
         computed:{
+            token(){
+                return this.$store.getters.token
+            },
+            tokenType(){
+                return this.$store.getters.tokenType
+            },
             clientes(){
                 return this.$store.getters.clientes
-            },
-            page:{
-                get(){
-                    return this.$store.getters.page
-                },
-                set(page){
-                    this.$store.commit('setPage', page)
-                }
-            },
-            itemsPerPage:{
-                get(){
-                    return this.$store.getters.itemsPerPage
-                },
-                set(itemsPerPage){
-                    this.$store.commit('setItemsPerPage', itemsPerPage)
-                }
             },
             maxPage(){
                 return this.$store.getters.maxPage
@@ -99,11 +93,6 @@
         },
         created(){
             this.loadClientes()
-        },
-        beforeRouteLeave(to, from, next){
-            this.page = 1
-            this.itemsPerPage = 5
-            next()
         }
     }
 </script>

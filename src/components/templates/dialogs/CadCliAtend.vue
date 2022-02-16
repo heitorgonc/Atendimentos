@@ -86,7 +86,8 @@ export default {
         },
         loadClientes(){
             const pagination = {
-                page: 1
+                page: 1,
+                search: ''
             }
             this.$store.dispatch('loadClientes', pagination).catch(() => this.erroBar = true)
         }

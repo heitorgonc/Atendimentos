@@ -24,6 +24,7 @@
 <script>
 const SucessoBar = () => import('../bars/SucessoBar.vue')
 const ErroBar = () => import('../bars/ErroBar.vue')
+import axios from 'axios'
 
 export default {
     components:{
@@ -39,6 +40,10 @@ export default {
             const servico = {
                 servico: this.servico
             }
+            axios({
+                method: 'post',
+                url: `${this.ba}`
+            })
             this.$http.post('servicos.json', servico).then(
                 () => {
                     this.loadServicos()
@@ -54,7 +59,8 @@ export default {
         },
         loadServicos(){
             const pagination = {
-                page: 1
+                page: 1,
+                search: ''
             }
             this.$store.dispatch('loadServicos', pagination).catch(() => this.erroBar = true)
         },
@@ -63,6 +69,7 @@ export default {
         }
     },
     computed:{
+        
         cadServicoAtend:{
             get(){
                 return this.cadServicoAtend

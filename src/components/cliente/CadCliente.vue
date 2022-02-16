@@ -1,7 +1,7 @@
 <template>
     <main class="main" id="main">
         <div class="container">
-            <h1 class="title">Cadastrar Cliente</h1>
+            <h4 class="title">Cadastrar Cliente</h4>
             <form class="row g-3">
                 <div class="col-md-6">
                     <label for="fantasia_cliente" class="form-label">Fantasia:</label>
@@ -15,8 +15,17 @@
                 </div>
                 <div class="col-md-6">
                     <label for="cnpj" class="form-label">CNPJ:</label>
-                    <v-text-field type="text" outlined dense v-model="cnpj" maxlength="18" id="cnpj" 
-                    :rules="[rules.cnpj]" autocomplete="off" v-mask='cnpjMask'></v-text-field>
+                    <v-text-field type="text" outlined dense v-model="cnpj" maxlength="15" id="cnpj" :rules="[rules.cnpj]" autocomplete="off" 
+                    name='cpfcnpj' onkeyup='mascaraMutuario(this,cpfCnpj)' onblur='clearTimeout()'></v-text-field>
+                    <!-- <masked-input
+                        type="text"
+                        name="phone"
+                        class="form-control"
+                        v-model="phone"
+                        :mask="['###.###.###-##', '##.###.###/####-##']"
+                        :guide="false"
+                        placeholderChar="#">
+                    </masked-input> -->
                 </div>
                 <div class="col-md-6">
                     <label for="contato" class="form-label">Contato:</label>
@@ -34,8 +43,8 @@
                     </div>
                 </div>
                 <div class="col-12">
-                    <v-btn class="btn btn-red mt-5" :disabled=" noFantasia || shortCnpj ||shortTelefone || 
-                    shortFantasia" @click="addCliente">Cadastrar Cliente</v-btn>
+                    <v-btn class="btn btn-red mt-5" :disabled="noFantasia || shortCnpj ||shortTelefone || shortFantasia"
+                    @click="addCliente">Cadastrar Cliente</v-btn>
                     <v-btn class="btn btn-black mt-5 ml-2" to="/clientes">Voltar</v-btn>
                 </div>
             </form>
@@ -48,6 +57,8 @@
 <script>
 const SucessoBar = () => import('../templates/bars/SucessoBar.vue')
 const ErroBar = () => import('../templates/bars/ErroBar.vue')
+// import MaskedInput from 'vue-text-mask'
+import axios from 'axios'
 
 export default {
     data(){
@@ -56,11 +67,13 @@ export default {
             telefone: '',
             cnpj: '',
             contato: '',
-            ativo: 1
+            ativo: 1,
+            phone: ''
         }
     },
     components:{
-        SucessoBar, ErroBar
+        SucessoBar, ErroBar, 
+        // MaskedInput
     },
     methods:{
         clear(){
@@ -78,7 +91,12 @@ export default {
                 contato: this.contato,
                 ativo: this.ativo
             }
-            this.$http.post('clientes.json', cliente).then(
+            axios({
+                method: 'post',
+                url: `${this.baseUrl}clientes.json`,
+                data: cliente,
+                headers: {'Authorization': `${this.tokenType} ${this.token}`}
+            }).then(
                 () => {
                     this.sucessoBar = true
                     this.clear()
@@ -91,6 +109,15 @@ export default {
         }
     },
     computed:{
+        baseUrl(){
+            return this.$store.getters.baseUrl
+        },
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         telefoneMask(){
             return this.$store.getters.telefoneMask
         },

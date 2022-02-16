@@ -1,12 +1,12 @@
 <template>
     <v-container fluid class="pa-0 ma-0">
         <div class="container">
-            <h1 class="title">Serviços Frequentes</h1>
+            <h4 class="title">Serviços Frequentes</h4>
             <template>
                 <v-card>
                     <v-card-title>
                         <v-row>
-                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa"
+                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa por Relato"
                             single-line hide-details @input="change"></v-text-field>
                             <v-col cols="12" sm="2">
                                 <v-select v-model="itemsPerPage" label="Itens por página" type="number" hide-selected
@@ -14,11 +14,11 @@
                             </v-col>
                         </v-row>
                     </v-card-title>
-                    <v-simple-table>
+                    <v-simple-table dense>
                         <template v-slot:default>
                             <thead>
                                 <tr>
-                                    <th>Relato</th>
+                                    <th>Serviço</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
@@ -55,7 +55,9 @@
 export default {
     data(){
         return {
-            search: ''
+            search: '',
+            itemsPerPage: 5,
+            page: 1
         }
     },
     methods:{
@@ -63,9 +65,11 @@ export default {
             const pagination = {
                 page: this.page,
                 itemsPerPage: this.itemsPerPage,
-                search: this.search
+                search: this.search,
+                token: this.token,
+                tokenType: this.tokenType
             }
-            this.$store.dispatch('loadServicos', pagination).catch(() => this.erroBar = true)
+            this.$store.dispatch('listServicos', pagination).catch(() => this.erroBar = true)
         },
         change(){
             this.page = 1
@@ -76,27 +80,17 @@ export default {
         this.loadServicos()
     },
     computed:{
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         servicos(){
             return this.$store.getters.servicos
         },
         maxPage(){
             return this.$store.getters.maxPage
-        },
-        itemsPerPage:{
-            get(){
-                return this.$store.getters.itemsPerPage
-            },
-            set(itemsPerPage){
-                this.$store.commit('setItemsPerPage', itemsPerPage)
-            }
-        },
-        page:{
-            get(){
-                return this.$store.getters.page
-            },
-            set(page){
-                this.$store.commit('setPage', page)
-            }
         },
         erroBar:{
             get(){
@@ -106,11 +100,6 @@ export default {
                 this.$store.commit('setErroBar', erroBar)
             }
         }
-    },
-    beforeRouteLeave(to, from, next){
-        this.itemsPerPage = 5
-        this.page = 1
-        next()
     }
 }
 </script>

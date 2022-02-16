@@ -1,7 +1,7 @@
 <template>
     <main class="main" id="main">
         <div class="container">
-            <h1 class="title">Cadastro de Técnico</h1>
+            <h4 class="title">Cadastro de Técnico</h4>
             <v-form class="row g-3">
                 <div class="col-md-6">
                     <label for="nome_tecnico" class="form-label">Nome:</label>
@@ -40,6 +40,7 @@
 <script>
 const SucessoBar = () => import('../templates/bars/SucessoBar.vue')
 const ErroBar = () => import('../templates/bars/ErroBar.vue')
+import axios from 'axios'
 
 export default {
     components:{
@@ -60,7 +61,12 @@ export default {
                 telefone: this.telefone.replace(/[^\d]+/g,''),
                 ativo: this.ativo
             }
-            this.$http.post('tecnicos.json', tecnico).then(
+            axios({
+                method: 'post',
+                url: `${this.baseUrl}tecnicos.json`,
+                data: tecnico,
+                headers: {'Authorization': `${this.tokenType} ${this.token}`}
+            }).then(
                 () => {
                     this.sucessoBar = true
                     this.clear()
@@ -76,6 +82,15 @@ export default {
         }
     },
     computed:{
+        baseUrl(){
+            return this.$store.getters.baseUrl
+        },
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         telefoneMask(){
             return this.$store.getters.telefoneMask
         },

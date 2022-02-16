@@ -5,6 +5,7 @@ import tecnico from './modules/tecnico'
 import cliente from './modules/cliente'
 import atendimento from './modules/atendimento'
 import servico from './modules/servico'
+import user from './modules/user'
 
 Vue.use(Vuex)
 
@@ -19,25 +20,14 @@ export default new Vuex.Store({
         },
         telefoneMask: '(##) ####-####',
         mobileMenu: false,
-        itemsPerPage: 5,
-        page: 1,
-        totalItems: 5,
-        maxPage: 1,
+        maxPage: 0,
         sucessoBar: false,
-        erroBar: false
+        erroBar: false,
+        baseUrl: 'http://localhost:8000/'
     },
     mutations:{
         setMobileMenu(state, mobileMenu){
             state.mobileMenu = mobileMenu
-        },
-        setTotalItems(state, totalItems){
-            state.totalItems = totalItems
-        },
-        setItemsPerPage(state, itemsPerPage){
-            state.itemsPerPage = itemsPerPage
-        },
-        setPage(state, page){
-            state.page = page
         },
         setMaxPage(state, {itemsPerPage, totalItems}){
             state.maxPage = Math.ceil(totalItems / itemsPerPage)
@@ -59,15 +49,6 @@ export default new Vuex.Store({
         mobileMenu(state){
             return state.mobileMenu
         },
-        totalItems(state){
-            return state.totalItems
-        },
-        itemsPerPage(state){
-            return state.itemsPerPage
-        },
-        page(state){
-            return state.page
-        },
         maxPage(state){
             return state.maxPage
         },
@@ -76,12 +57,16 @@ export default new Vuex.Store({
         },
         erroBar(state){
             return state.erroBar
+        },
+        baseUrl(state){
+            return state.baseUrl
         }
     },
     modules:{
         tecnico,
         cliente,
         atendimento,
-        servico
+        servico,
+        user
     }
 })

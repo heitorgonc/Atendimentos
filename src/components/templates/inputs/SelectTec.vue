@@ -9,7 +9,7 @@
                 <CadTecAtend></CadTecAtend>
             </v-dialog>
         </v-layout>
-        <v-autocomplete v-model="codTec" :loading="loading" :items="tecAtivos" item-text="nome" item-value="codigo" :search-input.sync="search" 
+        <v-autocomplete v-model="codTec" :loading="loading" :items="tecnicos" item-text="nome" item-value="codigo" :search-input.sync="search" 
         cache-items hide-no-data hide-details placeholder="Selecione ou pesquise o Técnico" outlined dense></v-autocomplete>
     </div>
 </template>
@@ -28,19 +28,24 @@ export default {
         }
     },
     methods:{
-        loadTecAtivos(){
+        loadTecnicos(){
             const pagination = {
                 page: 1,
                 ativo: 1,
-                nome: ''
+                search: this.search,
+                token: this.token,
+                tokenType: this.tokenType
             }
-            this.$store.dispatch('loadTecAtivos', pagination).catch(() => this.erroBar = true)
-        },
-        loadLogin(){
-            this.codTec = this.$store.getters.codLogin
+            this.$store.dispatch('listTecnicos', pagination).catch(() => this.erroBar = true)
         }
     },
     computed:{
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         cadTecDialog:{
             get(){
                 return this.$store.getters.cadTecDialog
@@ -49,8 +54,8 @@ export default {
                 this.$store.commit('setCadTecDialog', cadTecDialog)
             }
         },
-        tecAtivos(){
-            return this.$store.getters.tecAtivos
+        tecnicos(){
+            return this.$store.getters.tecnicos
         },
         erroBar:{
             get(){
@@ -70,8 +75,7 @@ export default {
         }
     },
     created(){
-        this.loadTecAtivos()
-        this.loadLogin()
+        this.loadTecnicos()
     }
 }
 </script>

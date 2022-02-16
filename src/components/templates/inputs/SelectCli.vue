@@ -9,7 +9,7 @@
                 <CadCliAtend></CadCliAtend>
             </v-dialog>
         </v-layout>
-        <v-autocomplete v-model="codCli" :loading="loading" :items="cliAtivos" item-text="fantasia" item-value="codigo" :search-input.sync="search" 
+        <v-autocomplete v-model="codCli" :loading="loading" :items="clientes" item-text="fantasia" item-value="codigo" :search-input.sync="search" 
         cache-items hide-no-data hide-details placeholder="Selecione ou pesquise o Cliente" outlined dense autofocus></v-autocomplete>
   </div>
 </template>
@@ -28,16 +28,24 @@ export default {
         }
     },
     methods:{
-        loadCliAtivos(){
+        loadClientes(){
             const pagination = {
                 page: 1,
                 ativo: 1,
-                fantasia: ''
+                search: this.search,
+                token: this.token,
+                tokenType: this.tokenType
             }
-            this.$store.dispatch('loadCliAtivos', pagination).catch(() => this.erroBar = true)
+            this.$store.dispatch('listClientes', pagination).catch(() => this.erroBar = true)
         }
     },
     computed:{
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         cadCliDialog:{
             get(){
                 return this.$store.getters.cadCliDialog
@@ -46,8 +54,8 @@ export default {
                 this.$store.commit('setCadCliDialog', cadCliDialog)
             }
         },
-        cliAtivos(){
-            return this.$store.getters.cliAtivos
+        clientes(){
+            return this.$store.getters.clientes
         },
         codCli:{
             get(){
@@ -67,7 +75,7 @@ export default {
         }
     },
     created(){
-        this.loadCliAtivos()
+        this.loadClientes()
     }
 }
 </script>

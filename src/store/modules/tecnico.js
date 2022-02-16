@@ -1,18 +1,15 @@
 import Vue from 'vue'
+import axios from 'axios'
 
 export default {
     state:{
         tecnicos: [],
-        tecAtivos: [],
         codLogin: 0,
         codTec: 0
     },
     mutations:{
         setTecnicos(state, tecnicos){
             state.tecnicos = tecnicos
-        },
-        setTecAtivos(state, tecAtivos){
-            state.tecAtivos = tecAtivos
         },
         setCodLogin(state, codLogin){
             state.codLogin = codLogin
@@ -23,7 +20,8 @@ export default {
     },
     actions:{
         loadTecnicos({commit}, pagination){
-            Vue.prototype.$http(`tecnicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}&nome=${pagination.search}`).then(resp => {
+            Vue.prototype.$http(`tecnicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}
+            &nome=${pagination.search}&ativo=${pagination.ativo}`).then(resp => {
                 const tecnicos = resp.data['hydra:member']
                 const totalItems = resp.data['hydra:totalItems']
                 const itemsPerPage = pagination.itemsPerPage
@@ -31,23 +29,24 @@ export default {
                     commit('setTecnicos', tecnicos)
                 }
                 if(itemsPerPage){
-                    commit('setTotalItems', totalItems)
                     commit('setMaxPage', {totalItems, itemsPerPage})
                 }
             }).catch(error => console.log(error))
         },
-        loadTecAtivos({commit}, pagination){
-            Vue.prototype.$http(`tecnicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}
-            &nome=${pagination.nome}&ativo=${pagination.ativo}`).then(
+        listTecnicos({commit}, pagination){
+            axios({
+                method: 'get',
+                url: `http://localhost:8000/tecnicos?page=${pagination.page}&itemsPerPage=${pagination.itemsPerPage}&nome=${pagination.search}&ativo=${pagination.ativo}`,
+                headers: {'Authorization': `${pagination.tokenType} ${pagination.token}`}
+            }).then(
                 resp => {
-                    const tecAtivos = resp.data['hydra:member']
+                    const tecnicos = resp.data['hydra:member']
                     const totalItems = resp.data['hydra:totalItems']
                     const itemsPerPage = pagination.itemsPerPage
-                    if(tecAtivos){
-                        commit('setTecAtivos', tecAtivos)
+                    if(tecnicos){
+                        commit('setTecnicos', tecnicos)
                     }
                     if(itemsPerPage){
-                        commit('setTotalItems', totalItems)
                         commit('setMaxPage', {totalItems, itemsPerPage})
                     }
                 }

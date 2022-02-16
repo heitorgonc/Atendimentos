@@ -73,7 +73,8 @@ export default {
         },
         loadTecnicos(){
             const pagination = {
-                page: 1
+                page: 1,
+                search: ''
             }
             this.$store.dispatch('loadTecnicos', pagination).catch(() => this.erroBar = true)
         }

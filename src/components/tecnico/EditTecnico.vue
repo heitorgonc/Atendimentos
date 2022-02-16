@@ -1,7 +1,7 @@
 <template>
     <main class="main" id="main">
         <div class="container">
-            <h1 class="title">Edição de Técnico</h1>
+            <h4 class="title">Edição de Técnico</h4>
             <v-form class="row g-3">
                 <div class="col-md-6">
                     <label for="nome_tecnico" class="form-label">Nome:</label>
@@ -42,67 +42,81 @@
 
 <script>
 const ErroBar = () => import('../templates/bars/ErroBar.vue')
+import axios from 'axios'
 
-    export default {
-        components:{
-            ErroBar
-        },
-        data(){
-            return{
-                codigo: this.$route.query.tecnico.codigo,
-                nome: this.$route.query.tecnico.nome,
-                telefone: this.$route.query.tecnico.telefone,
-                ativo: this.$route.query.tecnico.ativo
+export default {
+    components:{
+        ErroBar
+    },
+    data(){
+        return{
+            codigo: this.$route.query.tecnico.codigo,
+            nome: this.$route.query.tecnico.nome,
+            telefone: this.$route.query.tecnico.telefone,
+            ativo: this.$route.query.tecnico.ativo
+        }
+    },
+    methods:{
+        editTecnico(){
+            const tecnico = {
+                codigo: this.codigo,
+                nome: this.nome,
+                telefone: this.telefone.replace(/[^\d]+/g,''),
+                ativo: this.ativo
             }
+            axios({
+                method: 'put',
+                url: `${this.baseUrl}tecnicos/${tecnico.codigo}.json`,
+                data: tecnico,
+                headers: {'Authorization': `${this.tokenType} ${this.token}`}
+            }).then(
+                () => {
+                    this.$router.push('/tecnicos')
+                }
+            ).catch(
+                () => {
+                    this.erroBar = true
+                }
+            )
+        }
+    },
+    computed:{
+        baseUrl(){
+            return this.$store.getters.baseUrl
         },
-        methods:{
-            editTecnico(){
-                const tecnico = {
-                    codigo: this.codigo,
-                    nome: this.nome,
-                    telefone: this.telefone.replace(/[^\d]+/g,''),
-                    ativo: this.ativo
-                }
-                this.$http.put(`tecnicos/${tecnico.codigo}.json`, tecnico).then(
-                    () => {
-                        this.$router.push('/tecnicos')
-                    }
-                ).catch(
-                    () => {
-                        this.erroBar = true
-                    }
-                )
-            }
+        token(){
+            return this.$store.getters.token
         },
-        computed:{
-            telefoneMask(){
-                return this.$store.getters.telefoneMask
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
+        telefoneMask(){
+            return this.$store.getters.telefoneMask
+        },
+        noNome(){
+            return this.nome == ''
+        },
+        shortNome(){
+            return this.nome.length < 2
+        },
+        shortTelefone(){
+            if(this.telefone.length > 0){
+                return this.telefone.length < 14
+            }else{
+                return this.telefone.length > 0
+            }                
+        },
+        rules(){
+            return this.$store.getters.rules
+        },
+        erroBar:{
+            get(){
+                return this.$store.getter.erroBar
             },
-            noNome(){
-                return this.nome == ''
-            },
-            shortNome(){
-                return this.nome.length < 2
-            },
-            shortTelefone(){
-                if(this.telefone.length > 0){
-                    return this.telefone.length < 14
-                }else{
-                    return this.telefone.length > 0
-                }
-                
-            },
-            rules(){
-                return this.$store.getters.rules
-            },
-            erroBar:{
-                get(){
-                    return this.$store.getter.erroBar
-                },
-                set(erroBar){
-                    return this.$store.commit('setErroBar', erroBar)
-                }
+            set(erroBar){
+                return this.$store.commit('setErroBar', erroBar)
             }
         }
     }
+}
 </script>

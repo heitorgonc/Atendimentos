@@ -17,9 +17,13 @@
                 <v-card-text>
                     <v-container fluid>
                         <v-row>
-                            <v-autocomplete v-model="codLogin" :loading="loading" :items="tecAtivos" item-text="nome" item-value="codigo" :search-input.sync="search" 
-                            cache-items hide-no-data hide-details placeholder="Selecione o Técnico" outlined dense autofocus></v-autocomplete>
-                            <v-btn class="btn btn-red mt-5"  to="/atendimentos" :disabled="noTecnico">Entrar</v-btn>
+                            <v-text-field outlined dense placeholder="Usuário" v-model="usuario" :rules="[rules.required, rules.nome]" 
+                            spellcheck="false"></v-text-field>
+                            <v-text-field outlined dense placeholder="Senha" @click:append="show = !show" v-model="senha" 
+                            :append-icon="show ? 'mdi-eye-outline' : 'mdi-eye-off-outline'" :type="show ? 'text' : 'password'" 
+                            :rules="[rules.required, rules.nome]"></v-text-field>
+                            <v-btn class="btn btn-red mt-5"  @click="loginUser" :disabled="noUsuario || shortUsuario
+                            || noSenha || shortSenha">Entrar</v-btn>
                         </v-row>
                     </v-container>
                 </v-card-text>
@@ -29,24 +33,46 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data(){
         return{
-            search: '',
-            loading: false
+            usuario: 'severo',
+            senha: '123',
+            show: false
         }
     },
     methods:{
-        loadTecAtivos(){
-            const pagination = {
-                page: 1,
-                ativo: 1,
-                nome: this.search
-            }
-            this.$store.dispatch('loadTecAtivos', pagination).catch(() => this.erroBar = true)
+        loginUser(){
+            const formData = new FormData()
+            formData.append('usuario', this.usuario)
+            formData.append('senha', this.senha)
+            axios({
+                method: "post",
+                url: `${this.baseUrl}login`,
+                data: formData,
+                headers: { "Content-Type": "multipart/form-data" },
+            }).then(
+                resp => {
+                    const token = resp.data.access_token
+                    const tokenType = resp.data.token_type
+                    if(token){
+                        this.$store.commit('setToken', token)
+                        this.$store.commit('setTokenType', tokenType)
+                        this.$router.push('/atendimentos')
+                    }
+                }
+            ).catch(() => this.erroBar = true)
         }
     },
     computed:{
+        rules(){
+            return this.$store.getters.rules
+        },
+        baseUrl(){
+            return this.$store.getters.baseUrl
+        },
         codLogin:{
             get(){
                 return this.$store.getters.codLogin
@@ -55,12 +81,6 @@ export default {
                 this.$store.commit('setCodLogin', codLogin)
             }
         },
-        noTecnico(){
-            return this.codLogin == 0
-        },
-        tecAtivos(){
-            return this.$store.getters.tecAtivos
-        },
         erroBar:{
             get(){
                 return this.$store.getter.erroBar
@@ -68,10 +88,19 @@ export default {
             set(erroBar){
                 this.$store.commit('setErroBar', erroBar)
             }
+        },
+        noUsuario(){
+            return this.usuario == ''
+        },
+        shortUsuario(){
+            return this.usuario.length < 2
+        },
+        noSenha(){
+            return this.senha == ''
+        },
+        shortSenha(){
+            return this.senha.length < 2
         }
-    },
-    created(){
-        this.loadTecAtivos()
     }
 }
 </script>

@@ -3,7 +3,7 @@
         <div class="container">
             <v-card-title>
                 <v-layout justify-center>
-                    <h2 class="title">Cadastrar Serviço</h2>
+                    <h4 class="title">Cadastrar Serviço</h4>
                 </v-layout>
             </v-card-title>
             <v-card-text>
@@ -26,6 +26,7 @@
 <script>
 const SucessoBar = () => import('../templates/bars/SucessoBar.vue')
 const ErroBar = () => import('../templates/bars/ErroBar.vue')
+import axios from 'axios'
 
 export default {
     components:{
@@ -41,7 +42,12 @@ export default {
             const servico = {
                 servico: this.servico
             }
-            this.$http.post('servicos.json', servico).then(
+            axios({
+                method: 'post',
+                url: `${this.baseUrl}servicos.json`,
+                data: servico,
+                headers: {'Authorization': `${this.tokenType} ${this.token}`}
+            }).then(
                 () => {
                     this.loadServicos()
                     this.sucessoBar = true
@@ -55,7 +61,8 @@ export default {
         },
         loadServicos(){
             const pagination = {
-                page: 1
+                page: 1,
+                search: ''
             }
             this.$store.dispatch('loadServicos', pagination).catch(() => this.erroBar = true)
         },
@@ -64,6 +71,15 @@ export default {
         }
     },
     computed:{
+        baseUrl(){
+            return this.$store.getters.baseUrl
+        },
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         noServico(){
             return this.servico == ""
         },

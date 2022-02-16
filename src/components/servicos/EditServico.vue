@@ -3,7 +3,7 @@
         <div class="container">
             <v-card-title>
                 <v-layout justify-center>
-                    <h2 class="title">Editar Serviço</h2>
+                    <h4 class="title">Editar Serviço</h4>
                 </v-layout>
             </v-card-title>
             <v-card-text>
@@ -26,6 +26,7 @@
 <script>
 const SucessoBar = () => import('../templates/bars/SucessoBar.vue')
 const ErroBar = () => import('../templates/bars/ErroBar.vue')
+import axios from 'axios'
 
 export default {
     components:{
@@ -39,10 +40,15 @@ export default {
     methods:{
         editServico(){
             const servico = this.servico
-            this.$http.put(`servicos/${servico.codigo}.json`, servico).then(
+            axios({
+                method: 'put',
+                url: `${this.baseUrl}servicos/${servico.codigo}.json`,
+                data: servico,
+                headers: {'Authorization': `${this.tokenType} ${this.token}`}
+            }).then(
                 () => {
                     this.loadServicos()
-                    this.sucessoBar = true
+                    this.$router.push('/servicos')
                 }
             ).catch(
                 () => {
@@ -52,12 +58,22 @@ export default {
         },
         loadServicos(){
             const pagination = {
-                page: 1
+                page: 1,
+                search: ''
             }
             this.$store.dispatch('loadServicos', pagination).catch(() => this.erroBar = true)
         }
     },
     computed:{
+        baseUrl(){
+            return this.$store.getters.baseUrl
+        },
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         noServico(){
             return this.servico.servico == ""
         },
