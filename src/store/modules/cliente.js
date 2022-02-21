@@ -4,7 +4,6 @@ import axios from "axios"
 export default {
     state:{
         clientes: [],
-        cnpjMask: '##.###.###/####-##',
         codCli: 0
     },
     mutations:{
@@ -53,9 +52,6 @@ export default {
     getters:{
         clientes(state){
             return state.clientes
-        },
-        cnpjMask(state){
-            return state.cnpjMask
         },
         codCli(state){
             return state.codCli

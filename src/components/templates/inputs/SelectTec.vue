@@ -36,7 +36,7 @@ export default {
                 token: this.token,
                 tokenType: this.tokenType
             }
-            this.$store.dispatch('listTecnicos', pagination).catch(() => this.erroBar = true)
+            this.$store.dispatch('listTecnicos', pagination)
         }
     },
     computed:{
@@ -56,14 +56,6 @@ export default {
         },
         tecnicos(){
             return this.$store.getters.tecnicos
-        },
-        erroBar:{
-            get(){
-                return this.$store.getters.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
         },
         codTec:{
             get(){

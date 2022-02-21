@@ -8,8 +8,6 @@
 <script>
 const LoginContent = () => import('../login/LoginContent')
 export default {
-    components:{
-        LoginContent
-    }
+    components:{LoginContent}
 }
 </script>

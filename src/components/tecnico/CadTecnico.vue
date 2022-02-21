@@ -5,7 +5,7 @@
             <v-form class="row g-3">
                 <div class="col-md-6">
                     <label for="nome_tecnico" class="form-label">Nome:</label>
-                    <v-text-field type="text" id="nome_tecnico" outlined dense v-model="nome" maxlength="255" 
+                    <v-text-field type="text" id="nome_tecnico" outlined dense v-model="nome" maxlength="255" autofocus
                     :rules="[rules.required, rules.nome]" spellcheck="false" autocomplete="off"></v-text-field>
                 </div>
                 <div class="col-md-6">
@@ -68,12 +68,10 @@ export default {
                 headers: {'Authorization': `${this.tokenType} ${this.token}`}
             }).then(
                 () => {
-                    this.sucessoBar = true
+                    this.$store.commit('setSucessoBar', true)
                     this.clear()
                 }
-            ).catch(
-                () => { this.erroBar = true }
-            )
+            ).catch(() => {this.$store.commit('setErroBar', true)})
         },
         clear(){
             this.nome = ''
@@ -110,21 +108,11 @@ export default {
         rules(){
             return this.$store.getters.rules
         },
-        sucessoBar:{
-            get(){
-               return this.$store.getters.sucessoBar
-            },
-            set(sucessoBar){
-                this.$store.commit('setSucessoBar', sucessoBar)
-            }
+        sucessoBar(){
+            return this.$store.getters.sucessoBar
         },
-        erroBar:{
-            get(){
-                return this.$store.getter.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getter.erroBar
         }
     },
 }

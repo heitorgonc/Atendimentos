@@ -2,16 +2,14 @@
     <main id="main">
         <div class="container">
             <v-card-title>
-                <v-layout justify-center>
-                    <h4 class="title">Cadastrar Serviço</h4>
-                </v-layout>
+                <v-layout justify-center><h4 class="title">Cadastrar Serviço</h4></v-layout>
             </v-card-title>
             <v-card-text>
                 <form class="row g-3">
                     <div class="col-md-12">
                         <label for="servico" class="form-label">Serviço</label>
                         <v-textarea id="servico" rows="5" v-model="servico" maxlength="399" :rules="[rules.relato, rules.required]" 
-                        outlined spellcheck="false" dense></v-textarea>
+                        outlined spellcheck="false" dense autofocus></v-textarea>
                         <v-btn class="btn btn-red mt-5" :disabled=" noServico || shortServico" @click="addServico">Gravar Serviço</v-btn>
                         <v-btn class="btn btn-black mt-5 ml-2" to="/servicos"> Voltar </v-btn>
                     </div>
@@ -49,25 +47,10 @@ export default {
                 headers: {'Authorization': `${this.tokenType} ${this.token}`}
             }).then(
                 () => {
-                    this.loadServicos()
-                    this.sucessoBar = true
-                    this.clear()
+                    this.$store.commit('setSucessoBar', true)
+                    this.servico = ''
                 }
-            ).catch(
-                () => {
-                    this.erroBar = true
-                }
-            )
-        },
-        loadServicos(){
-            const pagination = {
-                page: 1,
-                search: ''
-            }
-            this.$store.dispatch('loadServicos', pagination).catch(() => this.erroBar = true)
-        },
-        clear(){
-            this.servico = ""
+            ).catch(() => {this.$store.commit('setErroBar', true)})
         }
     },
     computed:{
@@ -90,21 +73,11 @@ export default {
                 return this.servico.length > 0
             }
         },
-        sucessoBar:{
-            get(){
-                return this.$store.getters.sucessoBar
-            },
-            set(sucessoBar){
-                this.$store.commit('setSucessoBar', sucessoBar)
-            }
+        sucessoBar(){
+            return this.$store.getters.sucessoBar
         },
-        erroBar:{
-            get(){
-                return this.$store.getters.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getters.erroBar
         },
         rules(){
             return this.$store.getters.rules

@@ -35,11 +35,15 @@
                 <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos">Voltar</v-btn>
             </div>
         </div>
+        <ErroBar></ErroBar>
     </v-container>
 </template>
 
 <script>
+const ErroBar = () => import('../templates/bars/ErroBar.vue')
+
 export default {
+    components:{ErroBar},
     data(){
         return{
             page: 1,
@@ -68,7 +72,8 @@ export default {
                 token: this.token,
                 tokenType: this.tokenType
             }
-            this.$store.dispatch('listTecnicos', pagination).catch(() => this.erroBar = true)
+            this.$store.dispatch('listTecnicos', pagination)
+            .catch(() => this.$store.commit('setErroBar', true))
         },
         change(){
             this.page = 1
@@ -88,13 +93,8 @@ export default {
         maxPage(){
             return this.$store.getters.maxPage
         },
-        erroBar:{
-            get(){
-                return this.$store.getters.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getters.erroBar
         }
     },
     created(){

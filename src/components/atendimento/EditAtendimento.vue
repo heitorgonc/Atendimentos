@@ -53,7 +53,7 @@ export default {
             relato: this.$route.query.atendimento.relato,
             solicitante: this.$route.query.atendimento.solicitante,
             data: new Date(),
-            canal: 'Whatsapp',
+            canal: this.$route.query.atendimento.canalComunicacao,
             canais: [
                 {codigo: 1, nome: 'Presencial'},
                 {codigo: 2, nome: 'Whatsapp'},
@@ -77,11 +77,8 @@ export default {
                 url: `${this.baseUrl}atendimentos/${atendimento.codigo}.json`,
                 data: atendimento,
                 headers: {'Authorization': `${this.tokenType} ${this.token}`}
-            }).then(
-                () => { this.$router.push('/atendimentos') }
-            ).catch(
-                () => { this.erroBar = true }
-            )
+            }).then(() => { this.$router.push('/atendimentos') })
+            .catch(() => { this.$store.commit('setErroBar', true)})
         }
     },
     computed:{
@@ -95,11 +92,8 @@ export default {
             return this.$store.getters.tokenType
         },
         shortSolicitante(){
-            if(this.solicitante.length > 0){
-                return this.solicitante.length < 3
-            }else{
-                return this.solicitante.length > 0
-            }
+            if(this.solicitante.length > 0){return this.solicitante.length < 2}
+            else{return this.solicitante.length > 0}
         },
         noTecnico(){
             return this.codTec == 0
@@ -111,43 +105,25 @@ export default {
             return this.relato == ""
         },
         shortRelato(){
-            if(this.relato.length > 0){
-                return this.relato.length < 10
-            }else{
-                return this.relato.length > 0
-            }
+            if(this.relato.length > 0){return this.relato.length < 10}
+            else{return this.relato.length > 0}
         },
         rules(){
             return this.$store.getters.rules
         },
-        erroBar:{
-            get(){
-                return this.$store.getters.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getters.erroBar
         },
-        codTec:{
-            get(){
-                return this.$store.getters.codTec
-            },
-            set(codTec){
-                this.$store.commit('setCodTec', codTec)
-            }
+        codTec(){
+            return this.$store.getters.codTec
         },
-        codCli:{
-            get(){
-                return this.$store.getters.codCli
-            },
-            set(codCli){
-                this.$store.commit('setCodCli', codCli)
-            }
+        codCli(){
+            return this.$store.getters.codCli
         }
     },
     created(){
-        this.codTec = this.$route.query.atendimento.tecnico.codigo
-        this.codCli = this.$route.query.atendimento.cliente.codigo
+        this.$store.commit('setCodTec', this.$route.query.atendimento.tecnico.codigo)
+        this.$store.commit('setCodCli', this.$route.query.atendimento.cliente.codigo)
     },
     beforeRouteLeave(to, from, next){
         this.$store.commit('setCodTec', 0)

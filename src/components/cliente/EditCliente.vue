@@ -6,7 +6,7 @@
                 <div class="col-md-6">
                     <label for="fantasia_cliente" class="form-label">Fantasia:</label>
                     <v-text-field type="text" id="fantasia_cliente" outlined dense v-model="fantasia" maxlength="255" spellcheck="false"
-                    :rules="[rules.required, rules.nome]" autocomplete="off"></v-text-field>
+                    :rules="[rules.required, rules.nome]" autocomplete="off" autofocus></v-text-field>
                 </div>
                 <div class="col-md-6">
                     <label for="telefone_cliente" class="form-label">Telefone:</label>
@@ -14,9 +14,9 @@
                     autocomplete="off" :rules="[rules.telefone]" dense outlined></v-text-field>
                 </div>
                 <div class="col-md-6">
-                    <label for="cnpj" class="form-label">CNPJ:</label>
-                    <v-text-field type="text" outlined dense v-model="cnpj" maxlength="18" id="cnpj" 
-                    :rules="[rules.cnpj]" autocomplete="off" v-mask='cnpjMask'></v-text-field>
+                    <label for="cpfcnpj" class="form-label">CPF/CNPJ:</label>
+                    <v-text-field type="text" outlined dense v-model="cpfcnpj" maxlength="18" id="cpfcnpj" 
+                    :rules="[rules.cpfcnpj]" autocomplete="off" v-mask='cpfCnpjMask'></v-text-field>
                 </div>
                 <div class="col-md-6">
                     <label for="contato" class="form-label">Contato:</label>
@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <div class="col-12">
-                    <v-btn class="btn btn-red mt-5" :disabled=" noFantasia || shortCnpj ||shortTelefone || 
+                    <v-btn class="btn btn-red mt-5" :disabled=" noFantasia || shortCpfCnpj ||shortTelefone || 
                     shortFantasia" @click="editCliente">Atualizar Cliente</v-btn>
                     <v-btn class="btn btn-black mt-5 ml-2" to="/clientes">Voltar</v-btn>
                 </div>
@@ -55,15 +55,13 @@ const ErroBar = () => import('../templates/bars/ErroBar.vue')
 import axios from 'axios'
 
 export default {
-    components:{
-        ErroBar
-    },
+    components:{ErroBar},
     data(){
         return{
             codigo: this.$route.query.cliente.codigo,
             fantasia: this.$route.query.cliente.fantasia,
             telefone: this.$route.query.cliente.telefone,
-            cnpj: this.$route.query.cliente.cnpj,
+            cpfcnpj: this.$route.query.cliente.cnpj,
             contato: this.$route.query.cliente.contato,
             ativo: this.$route.query.cliente.ativo
         }
@@ -74,7 +72,7 @@ export default {
                 codigo: this.codigo,
                 fantasia: this.fantasia,
                 telefone: this.telefone.replace(/[^\d]+/g,''),
-                cnpj: this.cnpj.replace(/[^\d]+/g,''),
+                cnpj: this.cpfcnpj.replace(/[^\d]+/g,''),
                 contato: this.contato,
                 ativo: this.ativo
             }
@@ -83,18 +81,18 @@ export default {
                 url: `${this.baseUrl}clientes/${cliente.codigo}.json`,
                 data: cliente,
                 headers: {'Authorization': `${this.tokenType} ${this.token}`}
-            }).then(
-                () => {
-                    this.$router.push('/clientes')
-                }
-            ).catch(
-                () => {
-                    this.erroBar = true
-                }
-            )
+            }).then(() => {this.$router.push('/clientes')})
+            .catch(() => {this.$store.commit('setErroBar', true)})
         }
     },
     computed:{
+        cpfCnpjMask(){
+            if(this.cpfcnpj.length > 15){
+                return '##.###.###/####-##'
+            }else{
+                return '###.###.###-######'
+            }
+        },
         baseUrl(){
             return this.$store.getters.baseUrl
         },
@@ -107,14 +105,15 @@ export default {
         telefoneMask(){
             return this.$store.getters.telefoneMask
         },
-        cnpjMask(){
-            return this.$store.getters.cnpjMask
-        },
-        shortCnpj(){
-            if(this.cnpj.length > 0){
-                return this.cnpj.length < 14
+        shortCpfCnpj(){
+            if(this.cpfcnpj.length > 0){
+                if(this.cpfcnpj.length > 14){
+                    return this.cpfcnpj.length < 18
+                }else{
+                    return this.cpfcnpj.length < 14
+                }
             }else{
-                return this.cnpj.length > 0
+                return this.cpfcnpj.length > 0
             }
         },
         shortTelefone(){
@@ -138,13 +137,8 @@ export default {
         rules(){
             return this.$store.getters.rules
         },
-        erroBar:{
-            get(){
-                return this.$store.getter.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getter.erroBar
         }
     },
 }

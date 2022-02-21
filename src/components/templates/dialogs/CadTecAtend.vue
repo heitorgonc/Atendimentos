@@ -8,7 +8,7 @@
                 <v-col cols="12" sm="6">
                     <label for="nome_tecnico" class="form-label">Nome:</label>
                     <v-text-field type="text" id="nome_tecnico" outlined dense v-model="nome" maxlength="255" 
-                    :rules="[rules.required, rules.nome]" autocomplete="off"></v-text-field>
+                    :rules="[rules.required, rules.nome]" autocomplete="off" autofocus></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
                     <label for="telefone_tecnico" class="form-label">Telefone:</label>
@@ -29,8 +29,8 @@
                 </v-col>
             </v-row>
             <div class="col-12">
-                <button  class="btn btn-red mt-5" @click="addTecnico" :disabled="noNome || shortNome || shortTelefone">Cadastrar Técnico</button>
-                <a class="btn btn-black mt-5 ml-2" @click="cadTecDialog = false"> Voltar </a>
+                <v-btn class="btn btn-red" @click="addTecnico" :disabled="noNome || shortNome || shortTelefone">Cadastrar Técnico</v-btn>
+                <v-btn class="btn btn-black ml-2" @click="cadTecDialog = false"> Voltar </v-btn>
             </div>
         </v-card-text>
         <SucessoBar></SucessoBar>
@@ -41,6 +41,7 @@
 <script>
 const SucessoBar = () => import('../bars/SucessoBar.vue')
 const ErroBar = () => import('../bars/ErroBar.vue')
+import axios from 'axios'
 
 export default {
     components:{
@@ -61,25 +62,46 @@ export default {
                 telefone: this.telefone.replace(/[^\d]+/g,''),
                 ativo: this.ativo
             }
-            this.$http.post('tecnicos.json', tecnico).then(
-                this.sucessoBar = true,
-                this.loadTecnicos(),
-                this.cadTecDialog = false
-            ).catch(
+            axios({
+                method: 'post',
+                url: `${this.baseUrl}tecnicos.json`,
+                data: tecnico,
+                headers: {'Authorization': `${this.tokenType} ${this.token}`}
+            }).then(
                 () => {
-                    this.erroBar = true
+                    this.loadTecnicos(),
+                    this.$store.commit('setSucessoBar', true),
+                    this.clear()
                 }
-            )
+            ).catch(() => {this.$store.commit('setErroBar', true)})
         },
         loadTecnicos(){
             const pagination = {
                 page: 1,
-                search: ''
+                search: '',
+                ativo: 1,
+                token: this.token,
+                tokenType: this.tokenType
             }
-            this.$store.dispatch('loadTecnicos', pagination).catch(() => this.erroBar = true)
+            this.$store.dispatch('listTecnicos', pagination)
+            .catch(() => this.$store.commit('setErroBar', true))
+        },
+        clear(){
+            this.nome = "",
+            this.telefone = "",
+            this.ativo = 1
         }
     },
     computed:{
+        baseUrl(){
+            return this.$store.getters.baseUrl
+        },
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
         telefoneMask(){
             return this.$store.getters.telefoneMask
         },
@@ -89,19 +111,12 @@ export default {
         shortNome(){
             return this.nome.length < 2
         },
-        noTelefone(){
-            return this.telefone == ''
-        },
         shortTelefone(){
             if(this.telefone.length > 0){
                 return this.telefone.length < 14
             }else{
                 return this.telefone.length > 0
             }
-            
-        },
-        noAtivo(){
-            return this.ativo == null
         },
         rules(){
             return this.$store.getters.rules
@@ -114,21 +129,11 @@ export default {
                 this.$store.commit('setCadTecDialog', cadTecDialog)
             }
         },
-        sucessoBar:{
-            get(){
-                return this.$store.getters.sucessoBar
-            },
-            set(sucessoBar){
-                return this.$store.commit('setSucessoBar', sucessoBar)
-            }
+        sucessoBar(){
+            return this.$store.getters.sucessoBar
         },
-        erroBar:{
-            get(){
-                return this.$store.getter.erroBar
-            },
-            set(erroBar){
-                return this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getter.erroBar
         }
     }
 }

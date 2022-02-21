@@ -5,7 +5,7 @@
             <v-form class="row g-3">
                 <div class="col-md-6">
                     <label for="nome_tecnico" class="form-label">Nome:</label>
-                    <v-text-field type="text" id="nome_tecnico" outlined dense v-model="nome" maxlength="255" 
+                    <v-text-field type="text" id="nome_tecnico" outlined dense v-model="nome" maxlength="255" autofocus
                     :rules="[rules.required, rules.nome]" spellcheck="false" autocomplete="off"></v-text-field>
                 </div>
                 <div class="col-md-6">
@@ -45,9 +45,7 @@ const ErroBar = () => import('../templates/bars/ErroBar.vue')
 import axios from 'axios'
 
 export default {
-    components:{
-        ErroBar
-    },
+    components:{ErroBar},
     data(){
         return{
             codigo: this.$route.query.tecnico.codigo,
@@ -69,15 +67,8 @@ export default {
                 url: `${this.baseUrl}tecnicos/${tecnico.codigo}.json`,
                 data: tecnico,
                 headers: {'Authorization': `${this.tokenType} ${this.token}`}
-            }).then(
-                () => {
-                    this.$router.push('/tecnicos')
-                }
-            ).catch(
-                () => {
-                    this.erroBar = true
-                }
-            )
+            }).then(() => {this.$router.push('/tecnicos')})
+            .catch(() => {this.$store.commit('setErroBar', true)})
         }
     },
     computed:{
@@ -109,13 +100,8 @@ export default {
         rules(){
             return this.$store.getters.rules
         },
-        erroBar:{
-            get(){
-                return this.$store.getter.erroBar
-            },
-            set(erroBar){
-                return this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getter.erroBar
         }
     }
 }

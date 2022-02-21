@@ -32,67 +32,67 @@
                 <v-btn class="btn btn-red mt-5" to="/clientes/cadastro/">Cadastrar Cliente</v-btn>
                 <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos/">Voltar</v-btn>
             </div>
+            <ErroBar></ErroBar>
         </div>
     </v-container>
 </template>
 
 <script>
-    export default {
-        data(){
-            return{
-                search:'',
-                page: 1,
-                itemsPerPage: 5,
-                headers: [
-                    {text: '#', align: 'start', sortable: true, value: 'codigo'},
-                    { text: 'Fantasia', value: 'fantasia' },
-                    { text: 'Telefone', value: 'telefone' },
-                    { text: 'CNPJ', value: 'cnpj' },
-                    {text: 'Contato', value: 'contato'},
-                    {text: 'Ações', value: 'actions', sortable: false}
-                ]
+const ErroBar = () => import('../templates/bars/ErroBar.vue')
+
+export default {
+    components:{ ErroBar },
+    data(){
+        return{
+            search:'',
+            page: 1,
+            itemsPerPage: 5,
+            headers: [
+                {text: '#', align: 'start', sortable: true, value: 'codigo'},
+                { text: 'Fantasia', value: 'fantasia' },
+                { text: 'Telefone', value: 'telefone' },
+                { text: 'CPF/CNPJ', value: 'cnpj' },
+                {text: 'Contato', value: 'contato'},
+                {text: 'Ações', value: 'actions', sortable: false}
+            ]
+        }
+    },
+    methods:{
+        loadClientes(){
+            const pagination = {
+                page: this.page,
+                itemsPerPage: this.itemsPerPage,
+                search: this.search,
+                token: this.token,
+                tokenType: this.tokenType
             }
-        },
-        methods:{
-            loadClientes(){
-                const pagination = {
-                    page: this.page,
-                    itemsPerPage: this.itemsPerPage,
-                    search: this.search,
-                    token: this.token,
-                    tokenType: this.tokenType
-                }
-                this.$store.dispatch('listClientes', pagination).catch(() => this.erroBar = true)
-            },          
-            change(){
-                this.page = 1,
-                this.loadClientes()
-            }
-        },
-        computed:{
-            token(){
-                return this.$store.getters.token
-            },
-            tokenType(){
-                return this.$store.getters.tokenType
-            },
-            clientes(){
-                return this.$store.getters.clientes
-            },
-            maxPage(){
-                return this.$store.getters.maxPage
-            },
-            erroBar:{
-                get(){
-                    return this.$store.getters.erroBar
-                },
-                set(erroBar){
-                    this.$store.commit('setErroBar', erroBar)
-                }
-            }
-        },
-        created(){
+            this.$store.dispatch('listClientes', pagination)
+            .catch(() => this.$store.commit('setErroBar', true))
+        },          
+        change(){
+            this.page = 1,
             this.loadClientes()
         }
+    },
+    computed:{
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
+        clientes(){
+            return this.$store.getters.clientes
+        },
+        maxPage(){
+            return this.$store.getters.maxPage
+        },
+        erroBar(){
+            return this.$store.getters.erroBar
+        }
+    },
+    created(){
+        this.loadClientes()
     }
+}
 </script>

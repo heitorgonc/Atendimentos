@@ -9,8 +9,9 @@
                 <CadCliAtend></CadCliAtend>
             </v-dialog>
         </v-layout>
-        <v-autocomplete v-model="codCli" :loading="loading" :items="clientes" item-text="fantasia" item-value="codigo" :search-input.sync="search" 
-        cache-items hide-no-data hide-details placeholder="Selecione ou pesquise o Cliente" outlined dense autofocus></v-autocomplete>
+        <v-autocomplete v-model="codCli" :loading="loading" :items="clientes" item-text="fantasia" 
+        item-value="codigo" :search-input.sync="search" cache-items hide-no-data hide-details 
+        placeholder="Selecione ou pesquise o Cliente" outlined dense autofocus></v-autocomplete>
   </div>
 </template>
 

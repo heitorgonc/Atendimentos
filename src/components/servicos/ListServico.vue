@@ -6,7 +6,7 @@
                 <v-card>
                     <v-card-title>
                         <v-row>
-                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa por Relato"
+                            <v-text-field v-model="search" append-icon="mdi-magnify" label="Pesquisa por Serviço"
                             single-line hide-details @input="change"></v-text-field>
                             <v-col cols="12" sm="2">
                                 <v-select v-model="itemsPerPage" label="Itens por página" type="number" hide-selected
@@ -28,9 +28,7 @@
                                     <td>
                                         <v-btn :to="{ name: 'editarServico', params:{codigo: servico.codigo}, query:{servico: servico}}" 
                                         class="edit" plain icon>
-                                            <v-icon small>
-                                                mdi-pencil
-                                            </v-icon>
+                                            <v-icon small>mdi-pencil</v-icon>
                                         </v-btn>
                                     </td>
                                 </tr>
@@ -47,12 +45,15 @@
                 <v-btn class="btn btn-black mt-5 ml-2" to="/atendimentos"> Voltar </v-btn>
             </div>
         </div>
+        <ErroBar></ErroBar>
     </v-container>
 </template>
 
 <script>
+const ErroBar = () => import('../templates/bars/ErroBar.vue')
 
 export default {
+    components:{ErroBar},
     data(){
         return {
             search: '',
@@ -69,7 +70,8 @@ export default {
                 token: this.token,
                 tokenType: this.tokenType
             }
-            this.$store.dispatch('listServicos', pagination).catch(() => this.erroBar = true)
+            this.$store.dispatch('listServicos', pagination)
+            .catch(() => this.$store.commit('setErroBar', true))
         },
         change(){
             this.page = 1
@@ -92,13 +94,8 @@ export default {
         maxPage(){
             return this.$store.getters.maxPage
         },
-        erroBar:{
-            get(){
-                return this.$store.getters.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getters.erroBar
         }
     }
 }

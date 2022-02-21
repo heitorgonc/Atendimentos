@@ -10,7 +10,7 @@
                             single-line hide-details @input="change" v-if="searchAtend == true"></v-text-field>
                             <v-text-field v-model="searchTec" append-icon="mdi-magnify" label="Pesquisa por Técnico"
                             single-line hide-details @input="change" v-else></v-text-field>
-                            <v-col cols="12" sm="2">
+                            <v-col cols="12" sm="3">
                                 <v-select v-model="searchAtend" label="Pesquisar por" type="boolean" hide-selected
                                 :items="searchs" item-text="nome" item-value="valor" @input="clear"></v-select>
                             </v-col>
@@ -35,9 +35,7 @@
                         <template v-slot:[`item.actions`]="{ item }">
                             <v-btn :to="{ name: 'editarAtendimento', params:{codigo: item.codigo}, query:{atendimento: item}}" 
                             class="edit" plain icon>
-                                <v-icon small>
-                                    mdi-pencil
-                                </v-icon>
+                                <v-icon small>mdi-pencil</v-icon>
                             </v-btn>
                         </template>
                     </v-data-table>
@@ -50,12 +48,15 @@
                 <v-btn class="btn btn-red mt-5" to="/atendimentos/cadastro">Cadastrar Atendimento</v-btn>
             </div>
         </div>
+        <ErroBar></ErroBar>
     </v-container>
 </template>
 
 <script>
+const ErroBar = () => import('../templates/bars/ErroBar.vue')
 
 export default {
+    components:{ErroBar},
     data(){
         return{
             searchCli: '',
@@ -87,7 +88,8 @@ export default {
                 token: this.token,
                 tokenType: this.tokenType
             }
-            this.$store.dispatch('loadAtendimentos', pagination).catch(() => this.erroBar = true)
+            this.$store.dispatch('loadAtendimentos', pagination)
+            .catch(() => this.$store.commit('setErroBar', true))
         },
         change(){
             this.page = 1
@@ -102,7 +104,8 @@ export default {
                 token: this.token,
                 tokenType: this.tokenType
             }
-            this.$store.dispatch('listAtendimentos', pagination).catch(() => this.erroBar = true)
+            this.$store.dispatch('listAtendimentos', pagination)
+            .catch(() => this.$store.commit('setErroBar', true))
         },
         clear(){
             this.searchCli = ''
@@ -119,13 +122,8 @@ export default {
         maxPage(){
             return this.$store.getters.maxPage
         },
-        erroBar:{
-            get(){
-                return this.$store.getters.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getters.erroBar
         },
         token(){
             return this.$store.getters.token

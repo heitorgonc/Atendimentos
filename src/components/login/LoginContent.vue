@@ -22,20 +22,25 @@
                             <v-text-field outlined dense placeholder="Senha" @click:append="show = !show" v-model="senha" 
                             :append-icon="show ? 'mdi-eye-outline' : 'mdi-eye-off-outline'" :type="show ? 'text' : 'password'" 
                             :rules="[rules.required, rules.nome]"></v-text-field>
-                            <v-btn class="btn btn-red mt-5"  @click="loginUser" :disabled="noUsuario || shortUsuario
-                            || noSenha || shortSenha">Entrar</v-btn>
+                            <v-btn :disabled="noUsuario || shortUsuario|| noSenha || shortSenha"
+                            class="btn btn-red mt-5"  @click="loginUser">Entrar</v-btn>
                         </v-row>
                     </v-container>
                 </v-card-text>
             </v-card>
+            <ErroBar></ErroBar>
         </div>
     </v-container>
 </template>
 
 <script>
 import axios from 'axios';
+const ErroBar = () => import('../templates/bars/ErroBar.vue')
 
 export default {
+    components:{
+        ErroBar
+    },
     data(){
         return{
             usuario: 'severo',
@@ -57,13 +62,15 @@ export default {
                 resp => {
                     const token = resp.data.access_token
                     const tokenType = resp.data.token_type
+                    const codTec = resp.data.tecnico.codigo
                     if(token){
                         this.$store.commit('setToken', token)
                         this.$store.commit('setTokenType', tokenType)
+                        this.$store.commit('setCodTec', codTec)
                         this.$router.push('/atendimentos')
                     }
                 }
-            ).catch(() => this.erroBar = true)
+            ).catch(() => this.$store.commit('setErroBar', true))
         }
     },
     computed:{
@@ -73,21 +80,8 @@ export default {
         baseUrl(){
             return this.$store.getters.baseUrl
         },
-        codLogin:{
-            get(){
-                return this.$store.getters.codLogin
-            },
-            set(codLogin){
-                this.$store.commit('setCodLogin', codLogin)
-            }
-        },
-        erroBar:{
-            get(){
-                return this.$store.getter.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getter.erroBar
         },
         noUsuario(){
             return this.usuario == ''

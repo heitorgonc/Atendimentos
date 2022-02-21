@@ -51,7 +51,7 @@ export default {
     },
     data(){
         return {
-            servico: 'Personalizado',
+            servico: '',
             solicitante: 'Funcionário',
             data: new Date(),
             canal: 'Whatsapp',
@@ -77,18 +77,11 @@ export default {
                 url: `${this.baseUrl}atendimentos.json`,
                 data: atendimento,
                 headers: {'Authorization': `${this.tokenType} ${this.token}`}
-            }).then(
-                () => {
-                    this.sucessoBar = true
-                    this.clean()
+            }).then(() => {
+                    this.$store.commit('setSucessoBar', true)
+                    this.$store.commit('setRelato', "")
                 }
-            ).catch(
-                () => { this.erroBar = true }
-            )
-        },
-        clean(){
-            this.solicitante='Funcionário',
-            this.relato=''
+            ).catch(() => { this.$store.commit('setErroBar', true) })
         }
     },
     computed:{
@@ -97,11 +90,11 @@ export default {
         },
         relato:{
             get(){
-              return this.$store.getters.relato
+                return this.$store.getters.relato
             },
             set(relato){
                 this.$store.commit('setRelato', relato)
-            }  
+            }
         },
         token(){
             return this.$store.getters.token
@@ -109,21 +102,11 @@ export default {
         tokenType(){
             return this.$store.getters.tokenType
         },
-        sucessoBar:{
-            get(){
-                return this.$store.getters.sucessoBar
-            },
-            set(sucessoBar){
-                this.$store.commit('setSucessoBar', sucessoBar)
-            }
+        sucessoBar(){
+            return this.$store.getters.sucessoBar
         },
-        erroBar:{
-            get(){
-                return this.$store.getters.erroBar
-            },
-            set(erroBar){
-                this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getters.erroBar
         },
         codTec(){
             return this.$store.getters.codTec
@@ -133,16 +116,15 @@ export default {
         },
         shortSolicitante(){
             if(this.solicitante.length > 0){
-                return this.solicitante.length < 3
-            }else{
-                return this.solicitante.length > 0
+                return this.solicitante.length < 2
             }
+            else{return this.solicitante.length > 0}
         },
         noTecnico(){
-            return this.tecnico == 0
+            return this.codTec == 0
         },
         noCliente(){
-            return this.cliente == 0
+            return this.codCli == 0
         },
         noRelato(){
             return this.relato == ""
@@ -150,13 +132,10 @@ export default {
         shortRelato(){
             if(this.relato.length > 0){
                 return this.relato.length < 10
-            }else{
-                return this.relato.length > 0
             }
+            else{return this.relato.length > 0}
         },
-        rules(){
-            return this.$store.getters.rules
-        }
+        rules(){return this.$store.getters.rules}
     }
 }
 </script>

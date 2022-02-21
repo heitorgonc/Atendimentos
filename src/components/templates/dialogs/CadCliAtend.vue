@@ -8,7 +8,7 @@
                 <v-col cols="12" sm="6">
                     <label for="fantasia_cliente" class="form-label">Fantasia:</label>
                     <v-text-field type="text" id="fantasia_cliente" outlined dense v-model="fantasia" maxlength="255" 
-                    :rules="[rules.required, rules.nome]" autocomplete="off"></v-text-field>
+                    :rules="[rules.required, rules.nome]" autocomplete="off" autofocus></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
                     <label for="telefone_cliente" class="form-label">Telefone:</label>
@@ -16,9 +16,9 @@
                     dense outlined autocomplete="off" v-mask="telefoneMask"></v-text-field>
                 </v-col>
                 <v-col class="col-md-6">
-                    <label for="cnpj" class="form-label">CNPJ:</label>
-                    <v-text-field type="text" outlined dense v-model="cnpj" maxlength="18" id="cnpj_cliente" 
-                    :rules="[rules.cnpj]" autocomplete="off" v-mask='cnpjMask'></v-text-field>
+                    <label for="cpfcnpj" class="form-label">CPF/CNPJ:</label>
+                    <v-text-field type="text" outlined dense v-model="cpfcnpj" maxlength="18" id="cpfcnpj" 
+                    :rules="[rules.cpfcnpj]" autocomplete="off" v-mask='cpfCnpjMask'></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="6">
                     <label for="contato" class="form-label">Contato:</label>
@@ -38,9 +38,9 @@
                 </v-col>
             </v-row>
             <div class="col-12">
-                <button class="btn btn-red mt-5" :disabled="noFantasia || shortCnpj ||shortTelefone || shortFantasia"
-                @click="addCliente">Cadastrar Cliente</button>
-                <a class="btn btn-dark mt-5 ml-2" @click="cadCliDialog = false"> Voltar </a>
+                <v-btn class="btn btn-red" :disabled="noFantasia || shortCpfCnpj ||shortTelefone || shortFantasia"
+                @click="addCliente">Cadastrar Cliente</v-btn>
+                <v-btn class="btn btn-black ml-2" @click="cadCliDialog = false">Voltar</v-btn>
             </div>
         </v-card-text>
         <SucessoBar></SucessoBar>
@@ -51,6 +51,8 @@
 <script>
 const SucessoBar = () => import('../bars/SucessoBar.vue')
 const ErroBar = () => import('../bars/ErroBar.vue')
+import axios from 'axios'
+
 export default {
     components:{
         SucessoBar,
@@ -60,7 +62,7 @@ export default {
         return{
             telefone: '',
             fantasia: '',
-            cnpj: '',
+            cpfcnpj: '',
             contato: '',
             ativo: 1
         }
@@ -70,34 +72,60 @@ export default {
             const cliente = {
                 fantasia: this.fantasia,
                 telefone: this.telefone.replace(/[^\d]+/g,''),
-                cnpj: this.cnpj.replace(/[^\d]+/g,''),
+                cnpj: this.cpfcnpj.replace(/[^\d]+/g,''),
                 contato: this.contato,
                 ativo: this.ativo
             }
-            this.$http.post('clientes.json', cliente).then(
-                this.sucessoBar = true,
-                this.loadClientes(),
-                this.cadCliDialog = false
-            ).catch(
+            axios({
+                method: 'post',
+                url: `${this.baseUrl}clientes.json`,
+                data: cliente,
+                headers: {'Authorization': `${this.tokenType} ${this.token}`}
+            }).then( 
                 () => {
-                    this.erroBar = true
+                    this.loadClientes(),
+                    this.$store.commit('setSucessoBar', true)
+                    this.clear()
                 }
-            )
+            ).catch(() => {this.$store.commit('setErroBar', true)})
         },
         loadClientes(){
             const pagination = {
                 page: 1,
-                search: ''
+                search: '',
+                token: this.token,
+                tokenType: this.tokenType
             }
-            this.$store.dispatch('loadClientes', pagination).catch(() => this.erroBar = true)
+            this.$store.dispatch('listClientes', pagination)
+            .catch(() => this.$store.commit('setErroBar', true))
+        },
+        clear(){
+            this.fantasia = '',
+            this.telefone = '',
+            this.cpfcnpj = '',
+            this.contato = '',
+            this.ativo = 1 
         }
     },
     computed:{
+        baseUrl(){
+            return this.$store.getters.baseUrl
+        },
+        token(){
+            return this.$store.getters.token
+        },
+        tokenType(){
+            return this.$store.getters.tokenType
+        },
+        cpfCnpjMask(){
+            if(this.cpfcnpj.length > 15){
+                return '##.###.###/####-##'
+            }else{
+                return '###.###.###-######'
+            }
+        },
         telefoneMask(){
             return this.$store.getters.telefoneMask
-        },
-        cnpjMask(){
-            return this.$store.getters.cnpjMask
         },
         cadCliDialog:{
             get(){
@@ -110,11 +138,15 @@ export default {
         rules(){
             return this.$store.getters.rules
         },
-        shortCnpj(){
-            if(this.cnpj.length > 0){
-                return this.cnpj.length < 18
+        shortCpfCnpj(){
+            if(this.cpfcnpj.length > 0){
+                if(this.cpfcnpj.length > 14){
+                    return this.cpfcnpj.length < 18
+                }else{
+                    return this.cpfcnpj.length < 14
+                }
             }else{
-                return this.cnpj.length > 0
+                return this.cpfcnpj.length > 0
             }
         },
         shortTelefone(){
@@ -135,21 +167,11 @@ export default {
                 return this.fantasia.length > 0
             }
         },
-        sucessoBar:{
-            get(){
-                return this.$store.getters.sucessoBar
-            },
-            set(sucessoBar){
-                return this.$store.commit('setSucessoBar', sucessoBar)
-            }
+        sucessoBar(){
+            return this.$store.getters.sucessoBar
         },
-        erroBar:{
-            get(){
-                return this.$store.getter.erroBar
-            },
-            set(erroBar){
-                return this.$store.commit('setErroBar', erroBar)
-            }
+        erroBar(){
+            return this.$store.getter.erroBar
         }
     }
 }
